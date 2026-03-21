@@ -268,7 +268,7 @@ input{font-family:'Nunito',sans-serif;outline:none}
 //  CONFIG: Change API_BASE to your deployed server URL
 //  Example: var API_BASE = 'https://your-app.railway.app';
 // ═══════════════════════════════════════════════════════
-var API_BASE = window.location.origin;
+var API_BASE = 'https://media-downloader-production-b0b5.up.railway.app';
 
 // ═══════════════════════════════════════════════════════
 //  PLATFORM LOGOS
@@ -422,6 +422,14 @@ function dlDirect(url,fname){
     });
 }
 window._dl=function(url,fname){dlDirect(url,fname);};
+// Download all images one by one with small delay
+window._dlAll=function(imgs){
+  imgs.forEach(function(img,i){
+    setTimeout(function(){
+      dlDirect(img,'image_'+(i+1)+'.jpg');
+    },i*1200);
+  });
+};
 
 // ═══ BUILD QUALITY LIST ═══════════════════════════════
 function buildQ(formats){
@@ -466,32 +474,48 @@ function renderResult(data){
     var vidFmt=data.formats.find(function(f){return f.type==='video';});
     var src=vidFmt?vidFmt.url:'';
 
+    // Route ALL media through proxy to fix CORS and enable real playback
+    function proxyUrl(u,fname){return API_BASE+'/api/stream?url='+encodeURIComponent(u)+'&filename='+encodeURIComponent(fname||'media')+'&ref='+encodeURIComponent(u);}
+
     if(src&&data.thumbnail&&S.type!=='audio'){
-      // Thumbnail with play button → click to load video
+      // Thumbnail with play button → click to load video via proxy
       elMediaBox.innerHTML='<div class="tbox" id="TP"><img src="'+esc(data.thumbnail)+'" alt="thumbnail" onerror="this.src=\'\'"><div class="pov"><div class="pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div>';
       var tp=G('TP');
-      if(tp)tp.onclick=(function(s){return function(){elMediaBox.innerHTML='<div class="mbox"><video controls autoplay preload="auto" src="'+esc(s)+'"></video></div>';};})(src);
+      if(tp)tp.onclick=(function(s,fn){return function(){
+        var proxied=proxyUrl(s,fn);
+        elMediaBox.innerHTML='<div class="mbox"><video controls autoplay preload="auto" src="'+proxied+'"></video></div>';
+      };})(src,'preview.mp4');
     } else if(src&&S.type!=='audio'){
-      elMediaBox.innerHTML='<div class="mbox"><video controls preload="metadata" src="'+esc(src)+'"></video></div>';
+      elMediaBox.innerHTML='<div class="mbox"><video controls preload="metadata" src="'+proxyUrl(src,'preview.mp4')+'"></video></div>';
     } else if(data.thumbnail){
       elMediaBox.innerHTML='<div class="tbox"><img src="'+esc(data.thumbnail)+'" alt="thumbnail" onerror="this.parentNode.style.display=\'none\'"></div>';
     }
 
-    // Audio tab — show audio player for audio formats
+    // Audio tab — proxy the audio URL so it actually plays
     if(S.type==='audio'){
       var audFmt=data.formats.find(function(f){return f.type==='audio';});
-      if(audFmt) elMediaBox.innerHTML='<div class="mbox"><audio controls src="'+esc(audFmt.url)+'"></audio></div>';
+      if(audFmt){
+        var proxiedAudio=proxyUrl(audFmt.url,'audio.mp3');
+        elMediaBox.innerHTML='<div class="mbox"><audio controls src="'+proxiedAudio+'"></audio></div>';
+      }
     }
   }
 
-  // Image grid
+  // Image grid — proxy each image + Download All button
   if(isImg){
-    if(data.images[0]) elMediaBox.innerHTML='<div class="tbox"><img src="'+esc(data.images[0])+'" alt="preview" style="max-height:200px;object-fit:cover;border-radius:14px"></div>';
+    if(data.images[0]) elMediaBox.innerHTML='<div class="tbox"><img src="'+API_BASE+'/api/stream?url='+encodeURIComponent(data.images[0])+'&filename=image_1.jpg'+'" alt="preview" style="max-height:200px;object-fit:cover;border-radius:14px" onerror="this.src=\''+esc(data.images[0])+'\'"></div>';
     var ig='<div class="igrid">';
     data.images.forEach(function(img,i){
-      ig+='<div class="igitem"><img src="'+esc(img)+'" alt="'+(i+1)+'" loading="lazy"><div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">⬇ Save</button></div></div>';
+      var proxied=API_BASE+'/api/stream?url='+encodeURIComponent(img)+'&filename=image_'+(i+1)+'.jpg';
+      ig+='<div class="igitem"><img src="'+proxied+'" alt="'+(i+1)+'" loading="lazy" onerror="this.src=\''+esc(img)+'\'">'
+        +'<div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">⬇ Save</button></div></div>';
     });
-    elImgrid.innerHTML=ig+'</div>';
+    ig+='</div>';
+    // Download All button
+    if(data.images.length>1){
+      ig+='<button class="bigbtn" style="margin-top:10px" onclick="window._dlAll('+JSON.stringify(data.images)+')">⬇ Download All '+data.images.length+' Images</button>';
+    }
+    elImgrid.innerHTML=ig;
   }
 
   // Meta info
