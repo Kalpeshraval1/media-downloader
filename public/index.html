@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>All-in-One Media Downloader</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -21,14 +21,19 @@ input{font-family:'Nunito',sans-serif;outline:none}
 .orb:nth-child(1){width:580px;height:580px;background:radial-gradient(circle,rgba(37,99,235,.15),transparent 70%);top:-180px;left:-100px;animation-duration:11s}
 .orb:nth-child(2){width:480px;height:480px;background:radial-gradient(circle,rgba(124,58,237,.12),transparent 70%);bottom:-150px;right:-80px;animation-duration:15s;animation-delay:-5s}
 .orb:nth-child(3){width:360px;height:360px;background:radial-gradient(circle,rgba(0,229,170,.09),transparent 70%);top:44%;left:46%;animation-duration:9s;animation-delay:-3s}
-@keyframes ob{to{transform:translate(30px,44px)scale(1.12)}}
-.gbg{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.013) 1px,transparent 1px);background-size:52px 52px}
+@keyframes ob{to{transform:translate(30px,44px) scale(1.12)}}
+.gbg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.013) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.013) 1px,transparent 1px);
+  background-size:52px 52px}
 .pg{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:50px 22px 80px}
 .hero{text-align:center;margin-bottom:30px}
 .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,170,.08);border:1px solid rgba(0,229,170,.24);border-radius:100px;padding:5px 16px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:16px}
 .bdot{width:7px;height:7px;border-radius:50%;background:var(--g);animation:pl 1.5s infinite}
 @keyframes pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
-.hero h1{font-size:clamp(24px,4vw,50px);font-weight:900;line-height:1.07;letter-spacing:-.03em;margin-bottom:12px;background:linear-gradient(135deg,#fff 18%,var(--g) 52%,var(--b) 88%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1{font-size:clamp(24px,4vw,50px);font-weight:900;line-height:1.07;letter-spacing:-.03em;margin-bottom:12px;
+  background:linear-gradient(135deg,#fff 18%,var(--g) 52%,var(--b) 88%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{color:var(--t2);font-size:15px;font-weight:500;max-width:540px;margin:0 auto;line-height:1.7}
 .tabs{display:flex;justify-content:center;gap:5px;margin-bottom:20px;background:var(--g1);border:1px solid var(--b2);border-radius:100px;padding:5px;width:fit-content;margin-left:auto;margin-right:auto}
 .tab{display:flex;align-items:center;gap:7px;padding:10px 26px;border-radius:100px;color:var(--t2);font-size:13.5px;font-weight:700;transition:all .2s;white-space:nowrap}
@@ -60,29 +65,29 @@ input{font-family:'Nunito',sans-serif;outline:none}
 .ldr.show{display:flex}
 .spin{width:28px;height:28px;border:3px solid var(--b2);border-top-color:var(--g);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-.err-box{display:none;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.24);border-radius:16px;padding:18px 22px;margin-top:12px}
-.err-box.show{display:block}
-.err-h{display:flex;align-items:center;gap:9px;margin-bottom:7px}
-.err-h svg{width:17px;height:17px;color:var(--r);flex-shrink:0}
-.err-h b{color:var(--r);font-size:14px}
-.err-box p{font-size:13px;color:var(--t2);line-height:1.6}
-.err-box code{display:block;margin-top:8px;padding:8px 12px;background:var(--d2);border-radius:8px;font-size:12px;color:var(--g);font-family:monospace}
+.errbox{display:none;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.24);border-radius:16px;padding:18px 22px;margin-top:12px}
+.errbox.show{display:block}
+.errbox .eh{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.errbox .eh svg{width:17px;height:17px;color:var(--r);flex-shrink:0}
+.errbox .eh b{color:var(--r);font-size:14px}
+.errbox p{font-size:13px;color:var(--t2);line-height:1.6}
+.errbox code{display:block;margin-top:8px;padding:8px 12px;background:var(--d2);border-radius:8px;font-size:12px;color:var(--g);font-family:monospace;word-break:break-all}
 .result{display:none;margin-top:16px;animation:si .35s ease}
 .result.show{display:block}
 @keyframes si{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .rsplit{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--g1);border:1px solid var(--b2);border-radius:22px;padding:22px}
-.mbox{background:var(--d1);border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:12px;position:relative}
+.mbox{background:var(--d1);border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:12px;position:relative;min-height:60px}
 .mbox video,.mbox audio{width:100%;display:block}
-.mbox video{max-height:330px}
+.mbox video{max-height:330px;background:#000}
 .mbox audio{padding:16px}
-.tbox{position:relative;cursor:pointer;border-radius:14px;overflow:hidden;margin-bottom:12px;border:1px solid var(--b2)}
-.tbox img{width:100%;max-height:280px;object-fit:cover;display:block}
-.pov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.32);transition:background .2s}
-.tbox:hover .pov{background:rgba(0,0,0,.52)}
-.pbtn{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.4)}
-.pbtn svg{width:28px;height:28px;margin-left:5px;color:#000}
-/* DASH audio badge */
 .abadge{position:absolute;top:8px;right:8px;background:rgba(0,229,170,.9);color:#000;font-size:10px;font-weight:800;padding:3px 8px;border-radius:7px;pointer-events:none;z-index:2}
+.tbox{position:relative;cursor:pointer;border-radius:14px;overflow:hidden;margin-bottom:12px;border:1px solid var(--b2);min-height:120px;background:var(--d1)}
+.tbox img{width:100%;max-height:280px;object-fit:cover;display:block}
+.pov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);transition:background .2s}
+.tbox:hover .pov{background:rgba(0,0,0,.55)}
+.pbtn{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.4);transition:transform .15s}
+.tbox:hover .pbtn{transform:scale(1.08)}
+.pbtn svg{width:26px;height:26px;margin-left:4px;color:#000}
 .igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .igitem{border-radius:10px;overflow:hidden;border:1px solid var(--b2);position:relative}
 .igitem img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
@@ -113,7 +118,6 @@ input{font-family:'Nunito',sans-serif;outline:none}
 .qi-fmt{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:100px;flex-shrink:0}
 .fv{background:rgba(0,229,170,.12);color:var(--g)}
 .fa{background:rgba(37,99,235,.12);color:#7ec8fd}
-.fi{background:rgba(124,58,237,.14);color:#c4b5fd}
 .bigbtn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:16px;border-radius:15px;background:linear-gradient(135deg,#1d4ed8,#059669);color:#fff;font-size:15.5px;font-weight:800;transition:all .22s;box-shadow:0 4px 22px rgba(37,99,235,.3);margin-bottom:11px}
 .bigbtn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,99,235,.48)}
 .bigbtn:disabled{opacity:.6;cursor:wait;transform:none}
@@ -142,12 +146,9 @@ input{font-family:'Nunito',sans-serif;outline:none}
 .feat strong{display:block;font-size:13px;font-weight:800;color:var(--t1);margin-bottom:2px}
 .feat span{font-size:11.5px;color:var(--t2)}
 @media(max-width:680px){
-  .rsplit{grid-template-columns:1fr}
-  .pg{padding:30px 14px 60px}
-  .irow{flex-direction:column}
-  .gbtn{justify-content:center}
-  .feats{grid-template-columns:repeat(2,1fr)}
-  .tabs{flex-wrap:wrap;border-radius:18px}
+  .rsplit{grid-template-columns:1fr}.pg{padding:30px 14px 60px}
+  .irow{flex-direction:column}.gbtn{justify-content:center}
+  .feats{grid-template-columns:repeat(2,1fr)}.tabs{flex-wrap:wrap;border-radius:18px}
   .pgrid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
 }
 </style>
@@ -157,9 +158,9 @@ input{font-family:'Nunito',sans-serif;outline:none}
 <div class="gbg"></div>
 <div class="pg">
 <div class="hero">
-  <div class="badge"><span class="bdot"></span>Unlimited · Free · Direct Download · No Signup</div>
+  <div class="badge"><span class="bdot"></span>Unlimited &middot; Free &middot; Direct Download &middot; No Signup</div>
   <h1 id="H1">Download Video, Audio &amp; Images<br>Without Watermark</h1>
-  <p id="Sub">TikTok, Instagram, YouTube, Twitter &amp; 1000+ platforms — HD quality, completely free</p>
+  <p id="Sub">TikTok, Instagram, YouTube, Twitter &amp; 1000+ platforms &mdash; HD quality, completely free</p>
 </div>
 <div class="tabs">
   <button class="tab on" data-t="video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Video</button>
@@ -168,13 +169,16 @@ input{font-family:'Nunito',sans-serif;outline:none}
 </div>
 <div class="card">
   <div class="irow">
-    <input class="uinp" id="Url" type="url" placeholder="Paste any link — TikTok, Instagram, YouTube, Twitter, Facebook…" autocomplete="off" spellcheck="false"/>
+    <input class="uinp" id="Url" type="url" placeholder="Paste any link: TikTok, Instagram, YouTube, Twitter, Facebook..." autocomplete="off" spellcheck="false"/>
     <button class="gbtn" id="Go">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Download
     </button>
   </div>
-  <div class="det" id="Det"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="DetTxt"></span></div>
+  <div class="det" id="Det">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="DetTxt"></span>
+  </div>
   <div id="Vopts" class="opts">
     <span class="ol">Quality:</span>
     <button class="op on" data-q="">Best</button>
@@ -195,11 +199,11 @@ input{font-family:'Nunito',sans-serif;outline:none}
     <button class="op on" data-ab="128">128k</button>
     <button class="op" data-ab="320">320k</button>
   </div>
-  <div class="strow"><span class="sdot" id="Sdot"></span><span id="Stxt">Ready — paste any link above</span></div>
+  <div class="strow"><span class="sdot" id="Sdot"></span><span id="Stxt">Ready - paste any link above</span></div>
 </div>
-<div class="ldr" id="Ldr"><div class="spin"></div><span id="Ltxt">Fetching download links…</span></div>
-<div class="err-box" id="Err">
-  <div class="err-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><b id="Et">Error</b></div>
+<div class="ldr" id="Ldr"><div class="spin"></div><span>Fetching download links...</span></div>
+<div class="errbox" id="Err">
+  <div class="eh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><b id="Et">Error</b></div>
   <p id="Em">Please try again.</p>
   <code id="Ec" style="display:none"></code>
 </div>
@@ -221,7 +225,10 @@ input{font-family:'Nunito',sans-serif;outline:none}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span id="BBt">Select quality above</span>
       </button>
-      <div class="prog" id="Prog"><div class="prog-bar"><div class="prog-fill" id="PF"></div></div><div class="prog-txt" id="PT"></div></div>
+      <div class="prog" id="Prog">
+        <div class="prog-bar"><div class="prog-fill" id="PF"></div></div>
+        <div class="prog-txt" id="PT"></div>
+      </div>
       <div class="extras" id="Extras"></div>
     </div>
   </div>
@@ -231,23 +238,16 @@ input{font-family:'Nunito',sans-serif;outline:none}
   <div class="pgrid" id="Pgrid"></div>
 </div>
 <div class="feats">
-  <div class="feat"><i>⚡</i><strong>Instant Download</strong><span>Direct from CDN — no proxy delay</span></div>
-  <div class="feat"><i>🔧</i><strong>yt-dlp Powered</strong><span>1000+ sites supported</span></div>
-  <div class="feat"><i>💧</i><strong>No Watermark</strong><span>Clean original files</span></div>
-  <div class="feat"><i>🆓</i><strong>Unlimited & Free</strong><span>No rate limits</span></div>
+  <div class="feat"><i>&#9889;</i><strong>Instant Download</strong><span>Direct from CDN</span></div>
+  <div class="feat"><i>&#128296;</i><strong>yt-dlp Powered</strong><span>1000+ sites</span></div>
+  <div class="feat"><i>&#128167;</i><strong>No Watermark</strong><span>Clean original files</span></div>
+  <div class="feat"><i>&#128077;</i><strong>100% Free</strong><span>No limits, no signup</span></div>
 </div>
 </div>
-
 <script>
-// ======================================================
-//  CONFIG - Your Railway server URL
-// ======================================================
-var API_BASE='https://media-downloader-production-b0b5.up.railway.app';
+var API_BASE = 'https://media-downloader-production-b0b5.up.railway.app';
 
-// ======================================================
-//  PLATFORMS
-// ======================================================
-var PLATS=[
+var PLATS = [
   {k:'tiktok',n:'TikTok',re:/tiktok\.com|vm\.tiktok|vt\.tiktok/i,logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#000"/><path d="M33 15.5a8.5 8.5 0 01-5.3-1.8V26c0 4.4-3.6 8-8 8a8 8 0 01-8-8 8 8 0 018-8c.5 0 .9.05 1.4.12v4.5a3.6 3.6 0 00-1.4-.27 3.6 3.6 0 00-3.6 3.6 3.6 3.6 0 003.6 3.6 3.6 3.6 0 003.6-3.6V10h4.4a8.5 8.5 0 008.5 7.5v-2z" fill="#fff"/></svg>'},
   {k:'youtube',n:'YouTube',re:/youtube\.com|youtu\.be/i,logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#FF0000"/><path d="M20 16.5l12 7.5-12 7.5z" fill="#fff"/></svg>'},
   {k:'instagram',n:'Instagram',re:/instagram\.com/i,logo:'<svg viewBox="0 0 48 48"><defs><radialGradient id="ig1" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><rect width="48" height="48" rx="12" fill="url(#ig1)"/><rect x="13" y="13" width="22" height="22" rx="6" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="24" cy="24" r="6" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="32" cy="16" r="1.7" fill="#fff"/></svg>'},
@@ -262,9 +262,9 @@ var PLATS=[
   {k:'dailymotion',n:'Dailymotion',re:/dailymotion\.com/i,logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#0065F5"/><path d="M35.5 11.5h-5.8V19a12 12 0 10.3 6.7A12 12 0 0029.7 11.5h5.8zm-12 21a7 7 0 110-14 7 7 0 010 14z" fill="#fff"/><path d="M20.5 20.5l9 4.5-9 4.5z" fill="#0065F5"/></svg>'}
 ];
 
-var S={type:'video',quality:'',af:'mp3',ab:'128',nowm:true,curUrl:'',curFname:'',curAudioUrl:'',busy:false};
+var S = {type:'video',quality:'',af:'mp3',ab:'128',nowm:true,curUrl:'',curFname:'',curAudioUrl:'',busy:false};
 function G(id){return document.getElementById(id);}
-var elUrl=G('Url'),elGo=G('Go'),elLdr=G('Ldr'),elLtxt=G('Ltxt'),
+var elUrl=G('Url'),elGo=G('Go'),elLdr=G('Ldr'),
     elErr=G('Err'),elEt=G('Et'),elEm=G('Em'),elEc=G('Ec'),
     elResult=G('Result'),elMediaBox=G('MediaBox'),elImgrid=G('Imgrid'),
     elMeta=G('Meta'),elMTitle=G('MTitle'),elMRows=G('MRows'),elMTags=G('MTags'),
@@ -293,7 +293,6 @@ document.querySelectorAll('.tab').forEach(function(t){
     resetUI();
   };
 });
-
 document.querySelectorAll('[data-q]').forEach(function(p){p.onclick=function(){document.querySelectorAll('[data-q]').forEach(function(x){x.classList.remove('on');});p.classList.add('on');S.quality=p.dataset.q;};});
 document.querySelectorAll('[data-af]').forEach(function(p){p.onclick=function(){document.querySelectorAll('[data-af]').forEach(function(x){x.classList.remove('on');});p.classList.add('on');S.af=p.dataset.af;};});
 document.querySelectorAll('[data-ab]').forEach(function(p){p.onclick=function(){document.querySelectorAll('[data-ab]').forEach(function(x){x.classList.remove('on');});p.classList.add('on');S.ab=p.dataset.ab;};});
@@ -301,7 +300,7 @@ G('opWm').onclick=function(){S.nowm=!S.nowm;this.classList.toggle('on',S.nowm);}
 
 elUrl.addEventListener('input',function(){
   var pp=fp(elUrl.value.trim());
-  if(pp){elDetTxt.textContent=pp.n+' link detected OK';elDet.classList.add('show');}
+  if(pp){elDetTxt.textContent=pp.n+' link detected';elDet.classList.add('show');}
   else elDet.classList.remove('show');
 });
 elUrl.addEventListener('keydown',function(e){if(e.key==='Enter')elGo.click();});
@@ -310,13 +309,12 @@ function sz(b){if(!b)return'';b=parseInt(b);if(b>1e9)return(b/1e9).toFixed(1)+'G
 function fN(n){if(!n)return'';n=parseInt(n);if(n>1e9)return(n/1e9).toFixed(1)+'B';if(n>1e6)return(n/1e6).toFixed(1)+'M';if(n>1e3)return(n/1e3).toFixed(0)+'K';return String(n);}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function fp(url){if(!url)return null;for(var i=0;i<PLATS.length;i++)if(PLATS[i].re.test(url))return PLATS[i];return null;}
-var DIC='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+var DLI='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
 
-function proxyUrl(u,fname,inline){
+function proxyUrl(u, fname){
   if(!u)return'';
-  var q='url='+encodeURIComponent(u)+'&ref='+encodeURIComponent(u);
+  var q='url='+encodeURIComponent(u);
   if(fname)q+='&filename='+encodeURIComponent(fname);
-  if(inline)q+='&inline=1';
   return API_BASE+'/api/stream?'+q;
 }
 
@@ -337,26 +335,15 @@ function showErr(t,m,code){
 }
 function scroll2(){setTimeout(function(){elResult.scrollIntoView({behavior:'smooth',block:'nearest'});},200);}
 
-// ======================================================
-//  DOWNLOAD - INSTANT CDN-DIRECT
-//  Server only resolves the URL. Browser downloads
-//  straight from the CDN - zero proxy bandwidth used.
-//  This makes downloads INSTANT even for large files.
-// ======================================================
-function dlDirect(url,fname){
+function dlDirect(url, fname){
   if(!url)return;
-  elBigBtn.disabled=true;elBBt.textContent='Starting download...';
-  elProg.classList.add('show');elPF.style.width='30%';
+  elBigBtn.disabled=true;elBBt.textContent='Starting...';
+  elProg.classList.add('show');elPF.style.width='40%';
   elPT.textContent='Opening download...';
   setSt('busy','Downloading...');
-
-  // Create an invisible <a> and click it - browser handles the download
-  // Uses the proxy stream endpoint so filename and Content-Disposition are correct
-  var streamUrl=proxyUrl(url,fname);
   var a=document.createElement('a');
-  a.href=streamUrl;
+  a.href=proxyUrl(url,fname);
   a.download=fname||'download';
-  a.target='_blank';
   a.style.display='none';
   document.body.appendChild(a);
   a.click();
@@ -364,11 +351,11 @@ function dlDirect(url,fname){
     document.body.removeChild(a);
     elPF.style.width='100%';
     elPT.textContent='Download started! Check your Downloads folder.';
-    elBBt.textContent='Download started!';
+    elBBt.textContent='Downloaded!';
     elBigBtn.disabled=false;
     S.busy=false;
-    setSt('ok','Downloaded!');
-  },800);
+    setSt('ok','Downloaded');
+  },1200);
 }
 
 window._dl=function(url,fname){dlDirect(url,fname);};
@@ -378,69 +365,59 @@ window._dlAll=function(imgs){
       var a=document.createElement('a');
       a.href=proxyUrl(img,'image_'+(i+1)+'.jpg');
       a.download='image_'+(i+1)+'.jpg';
-      a.target='_blank';
+      a.style.display='none';
       document.body.appendChild(a);a.click();
       setTimeout(function(){document.body.removeChild(a);},1000);
-    },i*700);
+    },i*800);
   });
 };
 
-// ======================================================
-//  DASH AUDIO SYNC - plays separate audio alongside video
-//  Uses proxy for BOTH streams so no CORS issues
-// ======================================================
-function mountDashAudio(){
+// DASH audio sync - keeps audio track in sync with video
+var _dashTimer=null;
+function mountAudioSync(){
   var vid=G('PV'),aud=G('PA');
   if(!vid||!aud)return;
-  function tryPlay(){aud.currentTime=vid.currentTime;return aud.play();}
-  vid.addEventListener('play',function(){tryPlay().catch(function(){});});
-  vid.addEventListener('pause',function(){aud.pause();});
-  vid.addEventListener('seeking',function(){aud.currentTime=vid.currentTime;});
-  vid.addEventListener('volumechange',function(){aud.volume=vid.muted?0:vid.volume;aud.muted=vid.muted;});
-  vid.addEventListener('ended',function(){aud.pause();aud.currentTime=0;});
-  vid.addEventListener('ratechange',function(){aud.playbackRate=vid.playbackRate;});
-  // Sync drift correction every 2s
-  setInterval(function(){
-    if(!vid.paused&&Math.abs(vid.currentTime-aud.currentTime)>0.3){
+  if(_dashTimer)clearInterval(_dashTimer);
+  aud.volume=vid.volume;
+  vid.onplay=function(){aud.currentTime=vid.currentTime;aud.play().catch(function(){});};
+  vid.onpause=function(){aud.pause();};
+  vid.onseeked=function(){aud.currentTime=vid.currentTime;};
+  vid.onvolumechange=function(){aud.volume=vid.muted?0:vid.volume;aud.muted=vid.muted;};
+  vid.onratechange=function(){aud.playbackRate=vid.playbackRate;};
+  vid.onended=function(){aud.pause();aud.currentTime=0;};
+  _dashTimer=setInterval(function(){
+    if(vid&&!vid.paused&&!vid.seeking&&aud&&Math.abs(vid.currentTime-aud.currentTime)>0.5){
       aud.currentTime=vid.currentTime;
     }
   },2000);
-  aud.volume=vid.volume;
 }
 
-function buildPlayer(vidUrl,audioUrl,autoplay){
-  var pv=proxyUrl(vidUrl,'','inline=1');
-  var html='<div class="mbox">';
-  html+='<video id="PV" controls '+(autoplay?'autoplay ':'')+'preload="auto" style="width:100%;display:block;max-height:330px" src="'+pv+'"></video>';
+function buildPlayer(vidUrl, audioUrl, autoplay){
+  var pv=proxyUrl(vidUrl);
+  var h='<div class="mbox">';
+  h+='<video id="PV" controls '+(autoplay?'autoplay ':'')+'preload="auto" style="width:100%;max-height:330px;background:#000" src="'+esc(pv)+'"></video>';
   if(audioUrl){
-    var pa=proxyUrl(audioUrl,'','inline=1');
-    html+='<audio id="PA" src="'+pa+'" preload="auto"></audio>';
-    html+='<div class="abadge">&#128266; Audio synced</div>';
+    var pa=proxyUrl(audioUrl);
+    h+='<audio id="PA" preload="auto" src="'+esc(pa)+'"></audio>';
+    h+='<div class="abadge">Audio synced</div>';
   }
-  html+='</div>';
-  return html;
+  h+='</div>';
+  return h;
 }
 
-// ======================================================
-//  BUILD QUALITY LIST
-// ======================================================
-function buildQ(formats){
+function buildQ(fmts){
   var html='';
-  S.curAudioUrl='';
-  formats.forEach(function(f,i){
-    var isAudio=f.type==='audio';
-    var cls=isAudio?'fa':'fv';
+  fmts.forEach(function(f,i){
+    var isA=f.type==='audio';
+    var cls=isA?'fa':'fv';
     var ext=(f.ext||'mp4').toUpperCase();
     var fname=(f.quality||'download').replace(/\s+/g,'_').toLowerCase()+'.'+(f.ext||'mp4');
-    var audioUrl=f.audioUrl||'';
-    if(i===0){
-      S.curUrl=f.url;S.curFname=fname;S.curAudioUrl=audioUrl;
-      elBigBtn.disabled=false;elBBt.textContent='Download '+esc(f.quality);
-    }
-    html+='<div class="qi'+(i===0?' on':'')+'" data-url="'+esc(f.url)+'" data-fname="'+esc(fname)+'" data-label="'+esc(f.quality)+'" data-audio="'+esc(audioUrl)+'">'
+    var aUrl=f.audioUrl||'';
+    if(i===0){S.curUrl=f.url;S.curFname=fname;S.curAudioUrl=aUrl;elBigBtn.disabled=false;elBBt.textContent='Download '+f.quality;}
+    html+='<div class="qi'+(i===0?' on':'')+'" data-url="'+esc(f.url)+'" data-fname="'+esc(fname)+'" data-label="'+esc(f.quality||'')+'" data-audio="'+esc(aUrl)+'">'
       +'<div class="qi-l"><div class="qi-dot"></div><div>'
       +'<div class="qi-name">'+esc(f.quality||'Download')+'</div>'
-      +'<div class="qi-sub">'+esc(f.label||'')+(f.size?' - '+sz(f.size):'')+(f.fps?' - '+f.fps+'fps':'')+'</div>'
+      +'<div class="qi-sub">'+esc(f.label||'')+(f.size?' &nbsp;'+sz(f.size):'')+(f.fps?' &nbsp;'+f.fps+'fps':'')+'</div>'
       +'</div></div>'
       +'<span class="qi-fmt '+cls+'">'+esc(ext)+'</span></div>';
   });
@@ -449,12 +426,8 @@ function buildQ(formats){
     item.onclick=function(){
       document.querySelectorAll('.qi').forEach(function(x){x.classList.remove('on');});
       item.classList.add('on');
-      S.curUrl=item.dataset.url;
-      S.curFname=item.dataset.fname;
-      S.curAudioUrl=item.dataset.audio||'';
-      S.busy=false;
-      elBigBtn.disabled=false;
-      elBBt.textContent='Download '+esc(item.dataset.label);
+      S.curUrl=item.dataset.url;S.curFname=item.dataset.fname;S.curAudioUrl=item.dataset.audio||'';
+      S.busy=false;elBigBtn.disabled=false;elBBt.textContent='Download '+esc(item.dataset.label);
       elProg.classList.remove('show');elPF.style.width='0%';
     };
   });
@@ -465,9 +438,6 @@ elBigBtn.onclick=function(){
   dlDirect(S.curUrl,S.curFname);
 };
 
-// ======================================================
-//  RENDER RESULT
-// ======================================================
 function renderResult(data){
   setSt('ok','Ready');
   var isImg=data.images&&data.images.length>0;
@@ -479,44 +449,54 @@ function renderResult(data){
 
     if(src&&S.type!=='audio'){
       if(data.thumbnail){
-        // Show thumbnail first - user clicks to load player (saves bandwidth)
-        elMediaBox.innerHTML='<div class="tbox" id="TP"><img src="'+esc(data.thumbnail)+'" onerror="this.src=\'\'"><div class="pov"><div class="pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div>';
-        G('TP').onclick=(function(s,a){return function(){
-          elMediaBox.innerHTML=buildPlayer(s,a,true);
-          setTimeout(mountDashAudio,100);
-        };})(src,audioSrc);
+        elMediaBox.innerHTML='<div class="tbox" id="TP">'
+          +'<img src="'+esc(data.thumbnail)+'" onerror="this.style.display=\'none\'">'
+          +'<div class="pov"><div class="pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>'
+          +'</div>';
+        var tp=G('TP');
+        if(tp){
+          (function(s,a){
+            tp.onclick=function(){
+              elMediaBox.innerHTML=buildPlayer(s,a,true);
+              setTimeout(mountAudioSync,200);
+            };
+          })(src,audioSrc);
+        }
       } else {
         elMediaBox.innerHTML=buildPlayer(src,audioSrc,false);
-        setTimeout(mountDashAudio,100);
+        setTimeout(mountAudioSync,200);
       }
-    } else if(S.type==='audio'){
+    }
+
+    if(S.type==='audio'){
       var audFmt=data.formats.find(function(f){return f.type==='audio';});
       if(audFmt){
-        elMediaBox.innerHTML='<div class="mbox"><audio controls preload="metadata" src="'+proxyUrl(audFmt.url,'','inline=1')+'" style="width:100%;padding:16px;display:block"></audio></div>';
+        elMediaBox.innerHTML='<div class="mbox"><audio controls preload="metadata" src="'+esc(proxyUrl(audFmt.url))+'"></audio></div>';
       }
-    } else if(data.thumbnail){
-      elMediaBox.innerHTML='<div class="tbox"><img src="'+esc(data.thumbnail)+'"></div>';
     }
   }
 
-  // Image grid
   if(isImg){
-    var firstProxy=proxyUrl(data.images[0],'image_1.jpg');
-    elMediaBox.innerHTML='<div class="tbox"><img src="'+firstProxy+'" style="max-height:200px;object-fit:cover;border-radius:14px;width:100%" onerror="this.src=\''+esc(data.images[0])+'\'"></div>';
+    elMediaBox.innerHTML='<div class="tbox"><img src="'+esc(data.images[0])+'" style="max-height:200px;object-fit:cover;border-radius:14px;width:100%" onerror="this.style.display=\'none\'"></div>';
     var ig='<div class="igrid">';
     data.images.forEach(function(img,i){
-      var px=proxyUrl(img,'image_'+(i+1)+'.jpg');
-      ig+='<div class="igitem"><img src="'+px+'" loading="lazy" onerror="this.src=\''+esc(img)+'\'">'
-        +'<div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')"> Save</button></div></div>';
+      ig+='<div class="igitem">'
+        +'<img src="'+esc(img)+'" loading="lazy" onerror="this.style.display=\'none\'">'
+        +'<div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">Save</button></div>'
+        +'</div>';
     });
     ig+='</div>';
     if(data.images.length>1){
-      ig+='<button class="bigbtn" style="margin-top:10px" onclick="window._dlAll('+JSON.stringify(data.images)+')"> Download All '+data.images.length+' Images</button>';
+      ig+='<button class="bigbtn" style="margin-top:10px" onclick="window._dlAll('+JSON.stringify(data.images)+')">Download All '+data.images.length+' Images</button>';
     }
     elImgrid.innerHTML=ig;
+    var extH='';
+    data.images.forEach(function(img,i){
+      extH+='<button class="exbtn" onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">'+DLI+'<span>Image '+(i+1)+'</span><span class="exbtn-q">JPG</span></button>';
+    });
+    elExtras.innerHTML=extH;
   }
 
-  // Meta
   elMeta.style.display='block';
   elMTitle.textContent=(data.title||'Video').slice(0,80);
   var mr='';
@@ -525,31 +505,20 @@ function renderResult(data){
   if(data.views)mr+='<div class="rmeta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>'+fN(data.views)+' views</div>';
   if(data.likes)mr+='<div class="rmeta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'+fN(data.likes)+' likes</div>';
   elMRows.innerHTML=mr;
-  elMTags.innerHTML='<span class="rtag tg">'+esc(data.platform||'')+'</span><span class="rtag tb">yt-dlp OK</span>'+(data.formats&&data.formats.length?'<span class="rtag tp">'+data.formats.length+' qualities</span>':'');
+  elMTags.innerHTML='<span class="rtag tg">'+esc(data.platform||'')+'</span>'
+    +'<span class="rtag tb">yt-dlp</span>'
+    +(data.formats&&data.formats.length?'<span class="rtag tp">'+data.formats.length+' formats</span>':'');
 
   if(data.formats&&data.formats.length)buildQ(data.formats);
-
-  if(isImg){
-    var ext='';
-    data.images.forEach(function(img,i){
-      ext+='<button class="exbtn" onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">'+DIC+'<span>Image '+(i+1)+'</span><span class="exbtn-q">JPG</span></button>';
-    });
-    elExtras.innerHTML=ext;
-  }
-
   elResult.classList.add('show');scroll2();
 }
 
-// ======================================================
-//  MAIN FETCH
-// ======================================================
 elGo.addEventListener('click',function(){
   var url=elUrl.value.trim();
   if(!url){elUrl.focus();return;}
   if(!/^https?:\/\//i.test(url)){showErr('Invalid URL','Please paste a full link starting with https://');return;}
   resetUI();elGo.disabled=true;elLdr.classList.add('show');elErr.classList.remove('show');
   var plat=fp(url);setSt('busy',(plat?'Loading '+plat.n:'Fetching')+'...');
-
   fetch(API_BASE+'/api/download',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -563,7 +532,7 @@ elGo.addEventListener('click',function(){
   })
   .catch(function(e){
     elGo.disabled=false;elLdr.classList.remove('show');
-    showErr('Server Not Connected','Make sure your Railway server is running.','Check: '+API_BASE+'/health');
+    showErr('Server Error','Could not connect to the download server.',API_BASE+'/health');
   });
 });
 </script>
