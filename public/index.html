@@ -464,6 +464,42 @@ elBigBtn.onclick=function(){
   dlDirect(S.curUrl,S.curFname);
 };
 
+// ═══ PROXY URL HELPER ═════════════════════════════════
+function proxyUrl(u,fname){
+  if(!u)return'';
+  return API_BASE+'/api/stream?url='+encodeURIComponent(u)+'&filename='+encodeURIComponent(fname||'media')+'&ref='+encodeURIComponent(u);
+}
+
+// ═══ BUILD VIDEO PLAYER (handles muxed AND DASH+audio) ═
+function buildVideoPlayer(vidUrl, audioUrl, autoplay){
+  var proxiedVid=proxyUrl(vidUrl,'preview.mp4');
+  if(audioUrl){
+    // DASH: video has no audio — show video + hidden audio synced via JS
+    var proxiedAud=proxyUrl(audioUrl,'preview_audio.mp3');
+    return '<div class="mbox" style="position:relative">'
+      +'<video id="PV" controls '+(autoplay?'autoplay ':'')+' preload="auto" src="'+proxiedVid+'" style="width:100%;display:block;max-height:330px"></video>'
+      +'<audio id="PA" src="'+proxiedAud+'" preload="auto"></audio>'
+      +'<div id="AudioBadge" style="position:absolute;top:8px;right:8px;background:rgba(0,229,170,.85);color:#000;font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px">🔊 Audio synced</div>'
+      +'</div>';
+  }
+  // Muxed: video already has audio
+  return '<div class="mbox"><video controls '+(autoplay?'autoplay ':'')+' preload="auto" src="'+proxiedVid+'" style="width:100%;display:block;max-height:330px"></video></div>';
+}
+
+function syncAudio(){
+  var vid=document.getElementById('PV');
+  var aud=document.getElementById('PA');
+  if(!vid||!aud)return;
+  // Sync play/pause/seek
+  vid.addEventListener('play',function(){aud.currentTime=vid.currentTime;aud.play().catch(function(){});});
+  vid.addEventListener('pause',function(){aud.pause();});
+  vid.addEventListener('seeking',function(){aud.currentTime=vid.currentTime;});
+  vid.addEventListener('volumechange',function(){aud.volume=vid.volume;aud.muted=vid.muted;});
+  vid.addEventListener('ended',function(){aud.pause();aud.currentTime=0;});
+  // Start muted to allow autoplay, then unmute on first interaction
+  aud.volume=vid.volume;
+}
+
 // ═══ RENDER RESULT ════════════════════════════════════
 function renderResult(data){
   setSt('ok','Ready ✓');
@@ -473,45 +509,42 @@ function renderResult(data){
   if(!isImg&&data.formats&&data.formats.length){
     var vidFmt=data.formats.find(function(f){return f.type==='video';});
     var src=vidFmt?vidFmt.url:'';
-
-    // Route ALL media through proxy to fix CORS and enable real playback
-    function proxyUrl(u,fname){return API_BASE+'/api/stream?url='+encodeURIComponent(u)+'&filename='+encodeURIComponent(fname||'media')+'&ref='+encodeURIComponent(u);}
+    var audioSrc=(!vidFmt||vidFmt.hasMuxedAudio)?'':(vidFmt.audioUrl||'');
 
     if(src&&data.thumbnail&&S.type!=='audio'){
-      // Thumbnail with play button → click to load video via proxy
+      // Show thumbnail first — click to load player
       elMediaBox.innerHTML='<div class="tbox" id="TP"><img src="'+esc(data.thumbnail)+'" alt="thumbnail" onerror="this.src=\'\'"><div class="pov"><div class="pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div>';
       var tp=G('TP');
-      if(tp)tp.onclick=(function(s,fn){return function(){
-        var proxied=proxyUrl(s,fn);
-        elMediaBox.innerHTML='<div class="mbox"><video controls autoplay preload="auto" src="'+proxied+'"></video></div>';
-      };})(src,'preview.mp4');
+      if(tp)tp.onclick=(function(s,a){return function(){
+        elMediaBox.innerHTML=buildVideoPlayer(s,a,true);
+        syncAudio();
+      };})(src,audioSrc);
     } else if(src&&S.type!=='audio'){
-      elMediaBox.innerHTML='<div class="mbox"><video controls preload="metadata" src="'+proxyUrl(src,'preview.mp4')+'"></video></div>';
+      elMediaBox.innerHTML=buildVideoPlayer(src,audioSrc,false);
+      syncAudio();
     } else if(data.thumbnail){
       elMediaBox.innerHTML='<div class="tbox"><img src="'+esc(data.thumbnail)+'" alt="thumbnail" onerror="this.parentNode.style.display=\'none\'"></div>';
     }
 
-    // Audio tab — proxy the audio URL so it actually plays
+    // Audio tab
     if(S.type==='audio'){
       var audFmt=data.formats.find(function(f){return f.type==='audio';});
       if(audFmt){
-        var proxiedAudio=proxyUrl(audFmt.url,'audio.mp3');
-        elMediaBox.innerHTML='<div class="mbox"><audio controls src="'+proxiedAudio+'"></audio></div>';
+        elMediaBox.innerHTML='<div class="mbox"><audio controls src="'+proxyUrl(audFmt.url,'audio.mp3')+'" style="width:100%;padding:16px;display:block"></audio></div>';
       }
     }
   }
 
   // Image grid — proxy each image + Download All button
   if(isImg){
-    if(data.images[0]) elMediaBox.innerHTML='<div class="tbox"><img src="'+API_BASE+'/api/stream?url='+encodeURIComponent(data.images[0])+'&filename=image_1.jpg'+'" alt="preview" style="max-height:200px;object-fit:cover;border-radius:14px" onerror="this.src=\''+esc(data.images[0])+'\'"></div>';
+    if(data.images[0]) elMediaBox.innerHTML='<div class="tbox"><img src="'+proxyUrl(data.images[0],'image_1.jpg')+'" alt="preview" style="max-height:200px;object-fit:cover;border-radius:14px;width:100%" onerror="this.src=\''+esc(data.images[0])+'\'"></div>';
     var ig='<div class="igrid">';
     data.images.forEach(function(img,i){
-      var proxied=API_BASE+'/api/stream?url='+encodeURIComponent(img)+'&filename=image_'+(i+1)+'.jpg';
+      var proxied=proxyUrl(img,'image_'+(i+1)+'.jpg');
       ig+='<div class="igitem"><img src="'+proxied+'" alt="'+(i+1)+'" loading="lazy" onerror="this.src=\''+esc(img)+'\'">'
         +'<div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">⬇ Save</button></div></div>';
     });
     ig+='</div>';
-    // Download All button
     if(data.images.length>1){
       ig+='<button class="bigbtn" style="margin-top:10px" onclick="window._dlAll('+JSON.stringify(data.images)+')">⬇ Download All '+data.images.length+' Images</button>';
     }
