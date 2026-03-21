@@ -239,14 +239,14 @@ input{font-family:'Nunito',sans-serif;outline:none}
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-//  CONFIG — Your Railway server URL
-// ══════════════════════════════════════════════════════
+// ======================================================
+//  CONFIG - Your Railway server URL
+// ======================================================
 var API_BASE='https://media-downloader-production-b0b5.up.railway.app';
 
-// ══════════════════════════════════════════════════════
+// ======================================================
 //  PLATFORMS
-// ══════════════════════════════════════════════════════
+// ======================================================
 var PLATS=[
   {k:'tiktok',n:'TikTok',re:/tiktok\.com|vm\.tiktok|vt\.tiktok/i,logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#000"/><path d="M33 15.5a8.5 8.5 0 01-5.3-1.8V26c0 4.4-3.6 8-8 8a8 8 0 01-8-8 8 8 0 018-8c.5 0 .9.05 1.4.12v4.5a3.6 3.6 0 00-1.4-.27 3.6 3.6 0 00-3.6 3.6 3.6 3.6 0 003.6 3.6 3.6 3.6 0 003.6-3.6V10h4.4a8.5 8.5 0 008.5 7.5v-2z" fill="#fff"/></svg>'},
   {k:'youtube',n:'YouTube',re:/youtube\.com|youtu\.be/i,logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#FF0000"/><path d="M20 16.5l12 7.5-12 7.5z" fill="#fff"/></svg>'},
@@ -277,7 +277,7 @@ var elUrl=G('Url'),elGo=G('Go'),elLdr=G('Ldr'),elLtxt=G('Ltxt'),
 PLATS.forEach(function(p){
   var d=document.createElement('div');d.className='pc';
   d.innerHTML='<div class="pc-logo">'+p.logo+'</div><div class="pc-name">'+p.n+'</div>';
-  d.onclick=function(){elUrl.placeholder='Paste a '+p.n+' link…';elUrl.value='';elUrl.focus();elDet.classList.remove('show');};
+  d.onclick=function(){elUrl.placeholder='Paste a '+p.n+' link...';elUrl.value='';elUrl.focus();elDet.classList.remove('show');};
   elPgrid.appendChild(d);
 });
 
@@ -286,7 +286,7 @@ document.querySelectorAll('.tab').forEach(function(t){
     document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});
     t.classList.add('on');S.type=t.dataset.t;
     var H={video:'Download Video Without Watermark',audio:'Free Audio Downloader',image:'Image Downloader'};
-    var Sub={video:'TikTok, Instagram, YouTube & 1000+ sites — HD, no watermark, completely free',audio:'Extract MP3/OGG/WAV from any video or music link',image:'Download images from any platform'};
+    var Sub={video:'TikTok, Instagram, YouTube & 1000+ sites - HD, no watermark, completely free',audio:'Extract MP3/OGG/WAV from any video or music link',image:'Download images from any platform'};
     G('H1').innerText=H[S.type];G('Sub').innerText=Sub[S.type];
     elVopts.style.display=S.type==='audio'?'none':'flex';
     elAopts.style.display=S.type==='audio'?'flex':'none';
@@ -301,7 +301,7 @@ G('opWm').onclick=function(){S.nowm=!S.nowm;this.classList.toggle('on',S.nowm);}
 
 elUrl.addEventListener('input',function(){
   var pp=fp(elUrl.value.trim());
-  if(pp){elDetTxt.textContent=pp.n+' link detected ✓';elDet.classList.add('show');}
+  if(pp){elDetTxt.textContent=pp.n+' link detected OK';elDet.classList.add('show');}
   else elDet.classList.remove('show');
 });
 elUrl.addEventListener('keydown',function(e){if(e.key==='Enter')elGo.click();});
@@ -337,20 +337,20 @@ function showErr(t,m,code){
 }
 function scroll2(){setTimeout(function(){elResult.scrollIntoView({behavior:'smooth',block:'nearest'});},200);}
 
-// ══════════════════════════════════════════════════════
-//  DOWNLOAD — INSTANT CDN-DIRECT
+// ======================================================
+//  DOWNLOAD - INSTANT CDN-DIRECT
 //  Server only resolves the URL. Browser downloads
-//  straight from the CDN — zero proxy bandwidth used.
+//  straight from the CDN - zero proxy bandwidth used.
 //  This makes downloads INSTANT even for large files.
-// ══════════════════════════════════════════════════════
+// ======================================================
 function dlDirect(url,fname){
   if(!url)return;
-  elBigBtn.disabled=true;elBBt.textContent='Starting download…';
+  elBigBtn.disabled=true;elBBt.textContent='Starting download...';
   elProg.classList.add('show');elPF.style.width='30%';
-  elPT.textContent='Opening download…';
-  setSt('busy','Downloading…');
+  elPT.textContent='Opening download...';
+  setSt('busy','Downloading...');
 
-  // Create an invisible <a> and click it — browser handles the download
+  // Create an invisible <a> and click it - browser handles the download
   // Uses the proxy stream endpoint so filename and Content-Disposition are correct
   var streamUrl=proxyUrl(url,fname);
   var a=document.createElement('a');
@@ -363,11 +363,11 @@ function dlDirect(url,fname){
   setTimeout(function(){
     document.body.removeChild(a);
     elPF.style.width='100%';
-    elPT.textContent='✅ Download started! Check your Downloads folder.';
-    elBBt.textContent='✅ Download started';
+    elPT.textContent='Download started! Check your Downloads folder.';
+    elBBt.textContent='Download started!';
     elBigBtn.disabled=false;
     S.busy=false;
-    setSt('ok','Download started ✓');
+    setSt('ok','Downloaded!');
   },800);
 }
 
@@ -385,10 +385,10 @@ window._dlAll=function(imgs){
   });
 };
 
-// ══════════════════════════════════════════════════════
-//  DASH AUDIO SYNC — plays separate audio alongside video
+// ======================================================
+//  DASH AUDIO SYNC - plays separate audio alongside video
 //  Uses proxy for BOTH streams so no CORS issues
-// ══════════════════════════════════════════════════════
+// ======================================================
 function mountDashAudio(){
   var vid=G('PV'),aud=G('PA');
   if(!vid||!aud)return;
@@ -415,15 +415,15 @@ function buildPlayer(vidUrl,audioUrl,autoplay){
   if(audioUrl){
     var pa=proxyUrl(audioUrl,'','inline=1');
     html+='<audio id="PA" src="'+pa+'" preload="auto"></audio>';
-    html+='<div class="abadge">🔊 Audio synced</div>';
+    html+='<div class="abadge">&#128266; Audio synced</div>';
   }
   html+='</div>';
   return html;
 }
 
-// ══════════════════════════════════════════════════════
+// ======================================================
 //  BUILD QUALITY LIST
-// ══════════════════════════════════════════════════════
+// ======================================================
 function buildQ(formats){
   var html='';
   S.curAudioUrl='';
@@ -435,12 +435,12 @@ function buildQ(formats){
     var audioUrl=f.audioUrl||'';
     if(i===0){
       S.curUrl=f.url;S.curFname=fname;S.curAudioUrl=audioUrl;
-      elBigBtn.disabled=false;elBBt.textContent='⬇ Download '+esc(f.quality);
+      elBigBtn.disabled=false;elBBt.textContent='Download '+esc(f.quality);
     }
     html+='<div class="qi'+(i===0?' on':'')+'" data-url="'+esc(f.url)+'" data-fname="'+esc(fname)+'" data-label="'+esc(f.quality)+'" data-audio="'+esc(audioUrl)+'">'
       +'<div class="qi-l"><div class="qi-dot"></div><div>'
       +'<div class="qi-name">'+esc(f.quality||'Download')+'</div>'
-      +'<div class="qi-sub">'+esc(f.label||'')+(f.size?' · '+sz(f.size):'')+(f.fps?' · '+f.fps+'fps':'')+'</div>'
+      +'<div class="qi-sub">'+esc(f.label||'')+(f.size?' - '+sz(f.size):'')+(f.fps?' - '+f.fps+'fps':'')+'</div>'
       +'</div></div>'
       +'<span class="qi-fmt '+cls+'">'+esc(ext)+'</span></div>';
   });
@@ -454,7 +454,7 @@ function buildQ(formats){
       S.curAudioUrl=item.dataset.audio||'';
       S.busy=false;
       elBigBtn.disabled=false;
-      elBBt.textContent='⬇ Download '+esc(item.dataset.label);
+      elBBt.textContent='Download '+esc(item.dataset.label);
       elProg.classList.remove('show');elPF.style.width='0%';
     };
   });
@@ -465,11 +465,11 @@ elBigBtn.onclick=function(){
   dlDirect(S.curUrl,S.curFname);
 };
 
-// ══════════════════════════════════════════════════════
+// ======================================================
 //  RENDER RESULT
-// ══════════════════════════════════════════════════════
+// ======================================================
 function renderResult(data){
-  setSt('ok','Ready ✓');
+  setSt('ok','Ready');
   var isImg=data.images&&data.images.length>0;
 
   if(!isImg&&data.formats&&data.formats.length){
@@ -479,7 +479,7 @@ function renderResult(data){
 
     if(src&&S.type!=='audio'){
       if(data.thumbnail){
-        // Show thumbnail first — user clicks to load player (saves bandwidth)
+        // Show thumbnail first - user clicks to load player (saves bandwidth)
         elMediaBox.innerHTML='<div class="tbox" id="TP"><img src="'+esc(data.thumbnail)+'" onerror="this.src=\'\'"><div class="pov"><div class="pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div>';
         G('TP').onclick=(function(s,a){return function(){
           elMediaBox.innerHTML=buildPlayer(s,a,true);
@@ -507,11 +507,11 @@ function renderResult(data){
     data.images.forEach(function(img,i){
       var px=proxyUrl(img,'image_'+(i+1)+'.jpg');
       ig+='<div class="igitem"><img src="'+px+'" loading="lazy" onerror="this.src=\''+esc(img)+'\'">'
-        +'<div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">⬇ Save</button></div></div>';
+        +'<div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')"> Save</button></div></div>';
     });
     ig+='</div>';
     if(data.images.length>1){
-      ig+='<button class="bigbtn" style="margin-top:10px" onclick="window._dlAll('+JSON.stringify(data.images)+')">⬇ Download All '+data.images.length+' Images</button>';
+      ig+='<button class="bigbtn" style="margin-top:10px" onclick="window._dlAll('+JSON.stringify(data.images)+')"> Download All '+data.images.length+' Images</button>';
     }
     elImgrid.innerHTML=ig;
   }
@@ -525,7 +525,7 @@ function renderResult(data){
   if(data.views)mr+='<div class="rmeta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>'+fN(data.views)+' views</div>';
   if(data.likes)mr+='<div class="rmeta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'+fN(data.likes)+' likes</div>';
   elMRows.innerHTML=mr;
-  elMTags.innerHTML='<span class="rtag tg">'+esc(data.platform||'')+'</span><span class="rtag tb">yt-dlp ✓</span>'+(data.formats&&data.formats.length?'<span class="rtag tp">'+data.formats.length+' qualities</span>':'');
+  elMTags.innerHTML='<span class="rtag tg">'+esc(data.platform||'')+'</span><span class="rtag tb">yt-dlp OK</span>'+(data.formats&&data.formats.length?'<span class="rtag tp">'+data.formats.length+' qualities</span>':'');
 
   if(data.formats&&data.formats.length)buildQ(data.formats);
 
@@ -540,15 +540,15 @@ function renderResult(data){
   elResult.classList.add('show');scroll2();
 }
 
-// ══════════════════════════════════════════════════════
+// ======================================================
 //  MAIN FETCH
-// ══════════════════════════════════════════════════════
+// ======================================================
 elGo.addEventListener('click',function(){
   var url=elUrl.value.trim();
   if(!url){elUrl.focus();return;}
   if(!/^https?:\/\//i.test(url)){showErr('Invalid URL','Please paste a full link starting with https://');return;}
   resetUI();elGo.disabled=true;elLdr.classList.add('show');elErr.classList.remove('show');
-  var plat=fp(url);setSt('busy',(plat?'Loading '+plat.n:'Fetching')+'…');
+  var plat=fp(url);setSt('busy',(plat?'Loading '+plat.n:'Fetching')+'...');
 
   fetch(API_BASE+'/api/download',{
     method:'POST',
