@@ -325,7 +325,7 @@ input{font-family:'Nunito',sans-serif;outline:none}
 </div><!-- end .pg -->
 
 <script>
-var API = 'https://media-downloader-production-b0b5.up.railway.app';
+var API = 'https://billowing-butterfly-a8be.kalpeshraval947.workers.dev';
 
 /* Platform logos using real-looking SVG icons */
 var PLATS = [
@@ -469,21 +469,32 @@ function resetUI(){
 /* --- INSTANT DOWNLOAD ---------------------------------------
    Browser opens proxy URL as <a download> = starts instantly.
    No blob buffering. Works for any file size.                */
-function dlFile(url, fname){
+function dlFile(url, fname, audioUrl){
   if(!url) return;
+  var dlUrl;
+  if(audioUrl){
+    // DASH video - merge video+audio server-side via ffmpeg
+    dlUrl = API+'/api/merge?videoUrl='+encodeURIComponent(url)
+      +'&audioUrl='+encodeURIComponent(audioUrl)
+      +'&filename='+encodeURIComponent(fname||'video.mp4');
+  } else {
+    // Muxed video (already has audio) or audio-only - direct stream
+    dlUrl = API+'/api/stream?url='+encodeURIComponent(url)
+      +(fname?'&filename='+encodeURIComponent(fname):'');
+  }
   var a = document.createElement('a');
-  a.href = px(url, fname);
-  a.download = fname || 'download';
+  a.href = dlUrl;
+  a.download = fname || 'download.mp4';
   a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
   setTimeout(function(){ document.body.removeChild(a); }, 2000);
   elPF.style.width = '100%';
-  elPT.textContent = 'Download started! Check your Downloads folder.';
+  elPT.textContent = audioUrl ? 'Merging video+audio, download starting...' : 'Download started!';
   elProg.classList.add('show');
-  elDlTxt.textContent = 'Downloaded!';
-  setSt('ok', 'Downloaded');
-  setTimeout(function(){ elProg.classList.remove('show'); elPF.style.width='0%'; elDlTxt.textContent='Download again'; elDlBtn.disabled=false; }, 4000);
+  elDlTxt.textContent = 'Downloading...';
+  setSt('ok','Download started');
+  setTimeout(function(){ elProg.classList.remove('show'); elPF.style.width='0%'; elDlTxt.textContent='Download again'; elDlBtn.disabled=false; }, 5000);
 }
 
 window._dl = function(url, fname){ dlFile(url, fname); };
@@ -500,37 +511,25 @@ window._dlAll = function(imgs){
   });
 };
 
-elDlBtn.onclick = function(){ if(S.curUrl) dlFile(S.curUrl, S.curFname); };
+elDlBtn.onclick = function(){ if(S.curUrl) dlFile(S.curUrl, S.curFname, S.curAudioUrl); };
 
 /* --- DASH AUDIO SYNC ----------------------------------------
    YouTube 1080p+: video-only DASH stream has no audio.
    Hidden <audio> element stays in sync with <video>.        */
-function setupDashSync(){
-  var vid = G('PV'), aud = G('PA');
-  if(!vid || !aud) return;
-  if(window._dashTimer){ clearInterval(window._dashTimer); window._dashTimer=null; }
-  aud.volume = vid.volume;
-  vid.onplay = function(){ aud.currentTime=vid.currentTime; aud.play().catch(function(){}); };
-  vid.onpause = function(){ aud.pause(); };
-  vid.onseeked = function(){ aud.currentTime=vid.currentTime; };
-  vid.onended = function(){ aud.pause(); aud.currentTime=0; };
-  vid.onvolumechange = function(){ aud.muted=vid.muted; aud.volume=vid.muted?0:vid.volume; };
-  vid.onratechange = function(){ aud.playbackRate=vid.playbackRate; };
-  window._dashTimer = setInterval(function(){
-    if(vid && !vid.paused && !vid.seeking && aud && Math.abs(vid.currentTime-aud.currentTime)>0.5){
-      aud.currentTime = vid.currentTime;
-    }
-  }, 1500);
-}
+function setupDashSync(){ /* handled by /api/merge */ }
 
 /* Build video/audio player HTML */
 function buildPlayer(vidUrl, audioUrl, autoplay){
-  var pv = px(vidUrl);
   var h = '<div class="mbox">';
-  h += '<video id="PV" controls preload="auto" '+(autoplay?'autoplay ':'')+' style="width:100%;max-height:320px;background:#000" src="'+esc(pv)+'"></video>';
   if(audioUrl){
-    h += '<audio id="PA" preload="auto" src="'+esc(px(audioUrl))+'"></audio>';
-    h += '<div class="abadge">Audio synced</div>';
+    // DASH: video has no audio - use /api/merge to combine on-the-fly
+    // For preview we use the merge endpoint with streaming output
+    var mergeUrl = API+'/api/merge?videoUrl='+encodeURIComponent(vidUrl)+'&audioUrl='+encodeURIComponent(audioUrl)+'&filename=preview.mp4';
+    h += '<video id="PV" controls preload="auto" '+(autoplay?'autoplay ':'')+' style="width:100%;max-height:320px;background:#000" src="'+esc(mergeUrl)+'"></video>';
+    h += '<div class="abadge">HD + Audio</div>';
+  } else {
+    var pv = API+'/api/stream?url='+encodeURIComponent(vidUrl);
+    h += '<video id="PV" controls preload="auto" '+(autoplay?'autoplay ':'')+' style="width:100%;max-height:320px;background:#000" src="'+esc(pv)+'"></video>';
   }
   h += '</div>';
   return h;
