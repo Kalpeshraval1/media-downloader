@@ -27,6 +27,16 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1d' }));
 
+// Root route - serves index.html or confirms server is running
+app.get('/', (req, res) => {
+  const idx = path.join(__dirname, 'public', 'index.html');
+  if (require('fs').existsSync(idx)) {
+    res.sendFile(idx);
+  } else {
+    res.json({ status: 'Media Downloader API running', health: '/health', download: 'POST /api/download' });
+  }
+});
+
 // ── Detect tools ──────────────────────────────────────────
 let YT_DLP = 'yt-dlp';
 let FFMPEG  = 'ffmpeg';
