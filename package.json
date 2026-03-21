@@ -1,0 +1,17 @@
+{
+  "name": "media-downloader",
+  "version": "2.0.0",
+  "description": "All-in-One Media Downloader - Node.js + yt-dlp",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "install-ytdlp": "pip3 install -U yt-dlp || pip install -U yt-dlp"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
