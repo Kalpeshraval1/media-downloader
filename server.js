@@ -1,13 +1,6 @@
 // ════════════════════════════════════════════════════════════
 //  ALL-IN-ONE MEDIA DOWNLOADER — Node.js + yt-dlp
-//  UNLIMITED · FREE · DIRECT DOWNLOAD · ALL PLATFORMS
-//
-//  INSTALL:
-//    npm install
-//    pip install yt-dlp      (or: pip3 install yt-dlp)
-//    node server.js
-//
-//  DEPLOY FREE: railway.app / render.com / cyclic.sh
+//  FIXED: Muxed audio+video, audioUrl for DASH, image extraction
 // ════════════════════════════════════════════════════════════
 
 const express = require('express');
@@ -64,8 +57,6 @@ function fetchJSON(urlStr, hdrs = {}) {
 
 // ════════════════════════════════════════════════════════════
 //  yt-dlp: Get JSON info for any URL
-//  Supports: TikTok, YouTube, Instagram, Twitter, Facebook,
-//  Reddit, Vimeo, SoundCloud, Twitch, Dailymotion + 1000 more
 // ════════════════════════════════════════════════════════════
 function ytDlpInfo(url) {
   return new Promise((resolve, reject) => {
@@ -94,10 +85,17 @@ function ytDlpInfo(url) {
 }
 
 // ── Build clean format list from yt-dlp output ───────────
+// KEY FIX: Separates muxed (video+audio) from DASH (video-only)
+// and attaches audioUrl to DASH formats so frontend can pair them
 function buildFormats(info, mode) {
   const fmts = info.formats || [];
   const out  = [];
   const seen = new Set();
+
+  // Best audio-only stream — used for preview pairing with DASH video
+  const bestAudioFmt = fmts
+    .filter(f => f.url && f.acodec && f.acodec !== 'none' && (!f.vcodec || f.vcodec === 'none'))
+    .sort((a,b) => (b.abr||b.tbr||0) - (a.abr||a.tbr||0))[0];
 
   if (mode === 'audio') {
     const audioFmts = fmts
@@ -117,36 +115,70 @@ function buildFormats(info, mode) {
     return out;
   }
 
-  // Video formats by resolution
-  const videoFmts = fmts
-    .filter(f => f.url && f.vcodec && f.vcodec !== 'none' && f.height)
+  // Muxed = has BOTH video AND audio codec in one stream (mp4/webm progressive)
+  const muxedFmts = fmts
+    .filter(f => f.url && f.vcodec && f.vcodec !== 'none'
+      && f.acodec && f.acodec !== 'none' && f.height)
+    .sort((a,b) => (b.height||0) - (a.height||0));
+
+  // DASH video-only (YouTube adaptive — no audio, need pairing)
+  const dashFmts = fmts
+    .filter(f => f.url && f.vcodec && f.vcodec !== 'none' && f.height
+      && (!f.acodec || f.acodec === 'none'))
     .sort((a,b) => (b.height||0) - (a.height||0));
 
   [2160,1440,1080,720,480,360,240].forEach(res => {
-    const f = videoFmts.find(f => f.height === res);
-    if (f && !seen.has(res)) {
+    if (seen.has(res)) return;
+
+    // Always prefer muxed — it has audio built in
+    const muxed = muxedFmts.find(f => f.height === res);
+    if (muxed) {
       seen.add(res);
       const label = res >= 1080 ? `${res}p Full HD` : res >= 720 ? `${res}p HD` : `${res}p SD`;
-      out.push({ quality:`${res}p`, label, url:f.url, type:'video', ext:f.ext||'mp4', size:f.filesize||f.filesize_approx||0, fps:f.fps||0 });
+      out.push({
+        quality: `${res}p`, label, url: muxed.url, type: 'video',
+        ext: muxed.ext||'mp4', size: muxed.filesize||muxed.filesize_approx||0,
+        fps: muxed.fps||0, hasMuxedAudio: true, audioUrl: ''
+      });
+      return;
+    }
+
+    // DASH fallback — attach audioUrl so frontend can play audio separately
+    const dash = dashFmts.find(f => f.height === res);
+    if (dash) {
+      seen.add(res);
+      const label = res >= 1080 ? `${res}p Full HD` : res >= 720 ? `${res}p HD` : `${res}p SD`;
+      out.push({
+        quality: `${res}p`, label, url: dash.url, type: 'video',
+        ext: dash.ext||'mp4', size: dash.filesize||dash.filesize_approx||0,
+        fps: dash.fps||0, hasMuxedAudio: false,
+        audioUrl: bestAudioFmt ? bestAudioFmt.url : ''
+      });
     }
   });
 
   if (!out.length) {
-    videoFmts.slice(0,5).forEach((f,i) => {
+    [...muxedFmts, ...dashFmts].slice(0,5).forEach((f,i) => {
       if (seen.has(f.format_id)) return;
       seen.add(f.format_id);
-      out.push({ quality:f.format_note||`Option ${i+1}`, label:f.format_note||`Video ${i+1}`, url:f.url, type:'video', ext:f.ext||'mp4', size:f.filesize||0 });
+      const isMuxed = !!(f.acodec && f.acodec !== 'none');
+      out.push({
+        quality: f.format_note||`Option ${i+1}`, label: f.format_note||`Video ${i+1}`,
+        url: f.url, type: 'video', ext: f.ext||'mp4', size: f.filesize||0,
+        hasMuxedAudio: isMuxed, audioUrl: isMuxed ? '' : (bestAudioFmt?.url || '')
+      });
     });
   }
 
   if (!out.length && info.url) {
-    out.push({ quality:'Best', label:'Best Quality', url:info.url, type:'video', ext:info.ext||'mp4', size:0 });
+    out.push({ quality:'Best', label:'Best Quality', url:info.url, type:'video',
+      ext:info.ext||'mp4', size:0, hasMuxedAudio:true, audioUrl:'' });
   }
 
-  // Add best audio-only option
-  const bestAudio = fmts.find(f => f.url && f.acodec && f.acodec !== 'none' && (!f.vcodec || f.vcodec === 'none'));
-  if (bestAudio) {
-    out.push({ quality:'Audio Only', label:'Audio Only (MP3)', url:bestAudio.url, type:'audio', ext:bestAudio.ext||'mp3', size:bestAudio.filesize||0 });
+  // Always add audio-only option
+  if (bestAudioFmt) {
+    out.push({ quality:'Audio Only', label:'Audio Only (MP3)', url:bestAudioFmt.url,
+      type:'audio', ext:bestAudioFmt.ext||'mp3', size:bestAudioFmt.filesize||0 });
   }
 
   return out;
@@ -158,9 +190,9 @@ async function tikWmFallback(url) {
   if (!d || d.code !== 0 || !d.data) throw new Error('TikWM error');
   const t = d.data;
   const formats = [];
-  if (t.hdplay) formats.push({ quality:'HD',    label:'HD (No Watermark)',    url:t.hdplay, type:'video', ext:'mp4', size:t.hd_size||0 });
-  if (t.play)   formats.push({ quality:'SD',    label:'SD (No Watermark)',    url:t.play,   type:'video', ext:'mp4', size:t.size||0 });
-  if (t.wmplay) formats.push({ quality:'WM',    label:'Original (Watermark)', url:t.wmplay, type:'video', ext:'mp4', size:t.wm_size||0 });
+  if (t.hdplay) formats.push({ quality:'HD',    label:'HD (No Watermark)',    url:t.hdplay, type:'video', ext:'mp4', size:t.hd_size||0, hasMuxedAudio:true, audioUrl:'' });
+  if (t.play)   formats.push({ quality:'SD',    label:'SD (No Watermark)',    url:t.play,   type:'video', ext:'mp4', size:t.size||0,    hasMuxedAudio:true, audioUrl:'' });
+  if (t.wmplay) formats.push({ quality:'WM',    label:'Original (Watermark)', url:t.wmplay, type:'video', ext:'mp4', size:t.wm_size||0, hasMuxedAudio:true, audioUrl:'' });
   if (t.music)  formats.push({ quality:'Audio', label:'Audio Only (MP3)',     url:t.music,  type:'audio', ext:'mp3', size:0 });
   return {
     platform:'tiktok', title:t.title||'TikTok Video', thumbnail:t.cover||'',
@@ -192,10 +224,27 @@ app.post('/api/download', async (req, res) => {
 
   console.log(`[${new Date().toISOString()}] ${platform.toUpperCase()} - ${url.slice(0,80)}`);
 
-  // ── Try yt-dlp first ────────────────────────────────────
   try {
     const info    = await ytDlpInfo(url);
     const formats = buildFormats(info, type);
+
+    // Extract images from carousel posts (Instagram, TikTok slideshows etc.)
+    let images = [];
+    if (info.entries) {
+      // Playlist/carousel — collect thumbnails or direct image URLs
+      images = info.entries
+        .map(e => e.url || e.thumbnail || '')
+        .filter(Boolean);
+    } else if (info._type === 'playlist') {
+      images = (info.entries||[]).map(e => e.url||e.thumbnail||'').filter(Boolean);
+    }
+    // Also check requested type = image — gather all thumbnails as images
+    if (type === 'image') {
+      const thumbs = (info.thumbnails||[]).map(t=>t.url).filter(Boolean);
+      if (thumbs.length > 1) images = thumbs;
+      else if (info.thumbnail) images = [info.thumbnail];
+    }
+
     return res.json({
       success:   true, platform,
       title:     info.title || info.fulltitle || 'Video',
@@ -205,12 +254,11 @@ app.post('/api/download', async (req, res) => {
       views:     info.view_count || 0,
       likes:     info.like_count || 0,
       formats,
-      images:    [],
+      images,
     });
   } catch (ytErr) {
     console.log(`  yt-dlp error: ${ytErr.message.slice(0,100)}`);
 
-    // ── TikTok fallback ──────────────────────────────────
     if (isTikTok) {
       try {
         const data = await tikWmFallback(url);
@@ -231,7 +279,6 @@ app.post('/api/download', async (req, res) => {
 
 // ════════════════════════════════════════════════════════════
 //  STREAM PROXY: GET /api/stream?url=...&filename=...
-//  Pipes any CDN file through Node.js — avoids all CORS
 // ════════════════════════════════════════════════════════════
 app.get('/api/stream', (req, res) => {
   const { url, filename, ref } = req.query;
@@ -291,7 +338,7 @@ app.get('/health', (req, res) => {
 // ── Start ────────────────────────────────────────────────
 detectYtDlp(cmd => {
   if (cmd) console.log(`\n✅ yt-dlp found: ${cmd}`);
-  else     console.warn(`\n⚠️  yt-dlp NOT found!\n   Install: pip install yt-dlp\n   or:      pip3 install yt-dlp\n`);
+  else     console.warn(`\n⚠️  yt-dlp NOT found!\n   Install: pip install yt-dlp\n`);
   app.listen(PORT, () => {
     console.log(`\n🚀 Server ready: http://localhost:${PORT}`);
     console.log(`   Health:       http://localhost:${PORT}/health\n`);
