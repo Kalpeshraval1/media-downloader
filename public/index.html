@@ -648,7 +648,62 @@ function renderResult(data){
   setTimeout(function(){ elResult.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 200);
 }
 
+/* --- SERVER HEALTH CHECK on load -------------------------- */
+function checkServer(){
+  fetch(API+'/health',{method:'GET',signal:AbortSignal.timeout(8000)})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){ setSt('ok','Server ready - paste any link above'); }
+    else { setSt('err','Server issue - yt-dlp not found on server'); }
+  })
+  .catch(function(){
+    setSt('err','Server offline - visit railway.app to check your deployment');
+    elStxt.title = API+'/health';
+  });
+}
+checkServer();
+
 /* --- MAIN FETCH ------------------------------------------- */
+function doFetch(url, retryCount){
+  retryCount = retryCount||0;
+  fetch(API+'/api/download', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({url:url, type:S.type}),
+    signal:AbortSignal.timeout(60000)
+  })
+  .then(function(r){ if(!r.ok) throw new Error('Server error '+r.status); return r.json(); })
+  .then(function(data){
+    elGo.disabled = false;
+    elLdr.classList.remove('show');
+    if(!data.success){ showErr('Download Failed', data.error||'Could not fetch this URL', data.detail||data.fix||''); return; }
+    renderResult(data);
+  })
+  .catch(function(e){
+    /* Auto-retry once after 3 seconds if it was a network error */
+    if(retryCount < 1 && (e.name==='TypeError'||e.name==='AbortError')){
+      elPT.textContent='Retrying...';
+      elProg.classList.add('show');
+      setTimeout(function(){ doFetch(url,1); }, 3000);
+      return;
+    }
+    elGo.disabled = false;
+    elLdr.classList.remove('show');
+    elProg.classList.remove('show');
+    var isNetErr = (e.name==='TypeError'||e.name==='AbortError');
+    if(isNetErr){
+      showErr(
+        'Server Offline',
+        'Your Railway server is not responding. Steps to fix:  1) Go to railway.app  2) Open your project  3) Click Redeploy',
+        API+'/health  (open this in a new tab to test)'
+      );
+    } else {
+      showErr('Error', e.message||'Something went wrong', '');
+    }
+    setSt('err','Server offline');
+  });
+}
+
 elGo.addEventListener('click', function(){
   var url = elUrl.value.trim();
   if(!url){ elUrl.focus(); return; }
@@ -659,23 +714,7 @@ elGo.addEventListener('click', function(){
   elErr.classList.remove('show');
   var plat = findPlat(url);
   setSt('busy', (plat?'Loading '+plat.n:'Fetching')+'...');
-  fetch(API+'/api/download', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({url:url, type:S.type})
-  })
-  .then(function(r){ if(!r.ok) throw new Error('Server error '+r.status); return r.json(); })
-  .then(function(data){
-    elGo.disabled = false;
-    elLdr.classList.remove('show');
-    if(!data.success){ showErr('Download Failed', data.error||'Could not fetch this URL', data.detail||data.fix||''); return; }
-    renderResult(data);
-  })
-  .catch(function(e){
-    elGo.disabled = false;
-    elLdr.classList.remove('show');
-    showErr('Connection Error', 'Cannot reach the server. Check Railway is running.', API+'/health');
-  });
+  doFetch(url,0);
 });
 </script>
 </body>
