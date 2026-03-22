@@ -3,6 +3,17 @@ services:
     name: media-downloader
     runtime: docker
     dockerfilePath: ./Dockerfile
+    plan: free          # Change to "starter" ($7/mo) to eliminate cold starts
+    autoDeploy: true
     envVars:
       - key: PORT
-        value: 3000
+        value: "3000"
+      - key: MAX_CONCURRENT
+        value: "3"       # Free tier: keep low (limited CPU)
+      - key: CACHE_TTL_MS
+        value: "300000"  # 5 minutes
+      - key: QUEUE_MAX
+        value: "30"
+      - key: NODE_ENV
+        value: "production"
+    healthCheckPath: /health
