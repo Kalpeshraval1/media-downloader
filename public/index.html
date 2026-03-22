@@ -6,335 +6,463 @@
 <title>All-in-One Media Downloader</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
+/*
+ ┌─────────────────────────────────────────────────────────────┐
+ │  ALL CSS SCOPED TO #mdlWrap — 100% safe in WordPress /      │
+ │  Elementor. No global rules. Exact same design as the live  │
+ │  site at media-downloader-mnfd.onrender.com                 │
+ └─────────────────────────────────────────────────────────────┘
+*/
+#mdlWrap,#mdlWrap *,#mdlWrap *::before,#mdlWrap *::after{
+  box-sizing:border-box;margin:0;padding:0
+}
+#mdlWrap{
   --g:#00e5aa;--b:#2563eb;--r:#f43f5e;--y:#f59e0b;
   --d0:#040d1a;--d1:#071320;--d2:#0c1c30;--d3:#112540;
   --g1:rgba(255,255,255,.04);--g2:rgba(255,255,255,.08);
   --b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.14);--b3:rgba(255,255,255,.22);
   --t1:#d4eeff;--t2:#4a7296;
+  font-family:'Nunito',sans-serif;
+  color:var(--t1);
+  background:var(--d0);
+  min-height:600px;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+  width:100%
 }
-body{font-family:'Nunito',sans-serif;color:var(--t1);background:var(--d0);min-height:100vh}
-button{cursor:pointer;font-family:'Nunito',sans-serif;border:none;outline:none;background:none}
-input{font-family:'Nunito',sans-serif;outline:none}
-/* Background */
-.orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;animation:ob 14s ease-in-out infinite alternate}
-.orb:nth-child(1){width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.18),transparent 70%);top:-200px;left:-120px;animation-duration:11s}
-.orb:nth-child(2){width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.14),transparent 70%);bottom:-160px;right:-100px;animation-duration:15s;animation-delay:-6s}
-.orb:nth-child(3){width:380px;height:380px;background:radial-gradient(circle,rgba(0,229,170,.09),transparent 70%);top:42%;left:44%;animation-duration:9s;animation-delay:-3s}
-@keyframes ob{to{transform:translate(28px,40px) scale(1.1)}}
-.gbg{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
-  background-size:50px 50px}
-/* Layout */
-.pg{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:52px 24px 90px}
-/* Hero */
-.hero{text-align:center;margin-bottom:32px}
-.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,170,.08);border:1px solid rgba(0,229,170,.25);border-radius:100px;padding:6px 18px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:18px}
-.bdot{width:7px;height:7px;border-radius:50%;background:var(--g);animation:pl 1.5s infinite;flex-shrink:0}
-@keyframes pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
-.hero h1{font-size:clamp(28px,5vw,60px);font-weight:900;line-height:1.06;letter-spacing:-.03em;margin-bottom:14px;background:linear-gradient(135deg,#ffffff 20%,var(--g) 55%,var(--b) 90%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{color:var(--t2);font-size:15px;font-weight:500;max-width:560px;margin:0 auto;line-height:1.75}
-/* Tabs */
-.tabs{display:flex;justify-content:center;gap:4px;margin-bottom:22px;background:var(--g1);border:1px solid var(--b2);border-radius:100px;padding:5px;width:fit-content;margin-left:auto;margin-right:auto}
-.tab{display:flex;align-items:center;gap:7px;padding:10px 28px;border-radius:100px;color:var(--t2);font-size:13.5px;font-weight:700;transition:all .22s;white-space:nowrap}
-.tab:hover{color:var(--t1);background:var(--g2)}
-.tab.on{background:linear-gradient(135deg,var(--d2),var(--d3));color:var(--g);border:1px solid rgba(0,229,170,.32);box-shadow:0 2px 16px rgba(0,229,170,.15)}
-.tab svg{width:14px;height:14px;flex-shrink:0}
-/* Card / Input */
-.card{background:var(--g1);border:1px solid var(--b2);border-radius:24px;padding:24px;backdrop-filter:blur(20px);margin-bottom:16px}
-.irow{display:flex;gap:10px;margin-bottom:14px}
-.uinp{flex:1;background:var(--d1);border:1.5px solid var(--b2);border-radius:14px;padding:16px 20px;color:var(--t1);font-size:14px;font-weight:600;transition:border-color .2s,box-shadow .2s}
-.uinp::placeholder{color:var(--t2);font-weight:500}
-.uinp:focus{border-color:rgba(0,229,170,.5);box-shadow:0 0 0 3px rgba(0,229,170,.08)}
-/* Download button - matches screenshot exactly */
-.gbtn{display:flex;align-items:center;gap:8px;padding:16px 30px;background:linear-gradient(135deg,#1d4ed8,#059669);border-radius:14px;color:#fff;font-size:14px;font-weight:800;transition:all .22s;white-space:nowrap;box-shadow:0 4px 22px rgba(37,99,235,.35)}
-.gbtn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,99,235,.5)}
-.gbtn:active:not(:disabled){transform:translateY(0)}
-.gbtn:disabled{opacity:.5;cursor:not-allowed}
-.gbtn svg{width:16px;height:16px;flex-shrink:0}
-/* Detect badge */
-.det{display:none;align-items:center;gap:9px;background:rgba(0,229,170,.07);border:1px solid rgba(0,229,170,.22);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;color:#5eead4;margin-bottom:12px}
-.det.show{display:flex}
-/* Quality pills */
-.opts{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
-.ol{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);margin-right:2px}
-.op{padding:7px 16px;border-radius:100px;border:1px solid var(--b2);background:var(--g1);color:var(--t2);font-size:12px;font-weight:700;transition:all .18s}
-.op:hover,.op.on{background:rgba(0,229,170,.1);border-color:rgba(0,229,170,.45);color:var(--g);box-shadow:0 0 10px rgba(0,229,170,.15)}
-/* Status row */
-.strow{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:var(--t2)}
-.sdot{width:7px;height:7px;border-radius:50%;background:var(--g);flex-shrink:0}
-.sdot.busy{background:var(--y);animation:pl .9s infinite}
-.sdot.err{background:var(--r)}
-/* Loader */
-.ldr{display:none;flex-direction:column;align-items:center;gap:12px;padding:32px;color:var(--t2);font-size:14px;font-weight:600;text-align:center}
-.ldr.show{display:flex}
-.spin{width:30px;height:30px;border:3px solid var(--b2);border-top-color:var(--g);border-radius:50%;animation:sp .7s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-/* Error box */
-.ebox{display:none;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.24);border-radius:16px;padding:18px 22px;margin-top:14px}
-.ebox.show{display:block}
-.ebox-h{display:flex;align-items:center;gap:9px;margin-bottom:8px}
-.ebox-h svg{width:17px;height:17px;color:var(--r);flex-shrink:0}
-.ebox-h b{color:var(--r);font-size:14px}
-.ebox p{font-size:13px;color:var(--t2);line-height:1.6}
-.ebox code{display:block;margin-top:8px;padding:8px 12px;background:var(--d2);border-radius:8px;font-size:11px;color:var(--g);font-family:monospace;word-break:break-all}
-/* Result panel */
-.result{display:none;margin-top:18px}
-.result.show{display:block;animation:si .32s ease}
-@keyframes si{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.rsplit{display:grid;grid-template-columns:1fr 1fr;gap:18px;background:var(--g1);border:1px solid var(--b2);border-radius:24px;padding:24px}
-/* Media preview */
-.mbox{background:#000;border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:12px;position:relative;min-height:60px}
-.mbox video{width:100%;display:block;max-height:320px;background:#000}
-.mbox audio{width:100%;display:block;padding:14px;background:var(--d1)}
-.tbox{position:relative;cursor:pointer;border-radius:14px;overflow:hidden;margin-bottom:12px;border:1px solid var(--b2);background:var(--d2)}
-.tbox img{width:100%;max-height:260px;object-fit:cover;display:block}
-.pov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.38);transition:background .2s}
-.tbox:hover .pov{background:rgba(0,0,0,.56)}
-.pbtn{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.45);transition:transform .15s}
-.tbox:hover .pbtn{transform:scale(1.06)}
-.pbtn svg{width:26px;height:26px;margin-left:4px;color:#000}
-.abadge{position:absolute;top:8px;right:8px;background:var(--g);color:#000;font-size:10px;font-weight:800;padding:3px 9px;border-radius:7px;z-index:3;pointer-events:none}
-/* Image grid */
-.igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.igitem{border-radius:9px;overflow:hidden;border:1px solid var(--b2);position:relative}
-.igitem img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-.igov{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s;cursor:pointer;border-radius:9px}
-.igitem:hover .igov{opacity:1}
-.igov button{font-size:11px;font-weight:800;background:var(--g);color:#000;padding:5px 11px;border-radius:7px}
-/* Meta */
-.meta{background:var(--d1);border:1px solid var(--b2);border-radius:13px;padding:14px}
-.meta-title{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:8px;color:var(--t1)}
-.meta-rows{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
-.meta-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)}
-.meta-row svg{width:13px;height:13px;flex-shrink:0}
-.tags{display:flex;flex-wrap:wrap;gap:5px}
-.tag{padding:3px 9px;border-radius:7px;font-size:11px;font-weight:700}
-.tg{background:rgba(0,229,170,.12);color:var(--g)}
-.tb{background:rgba(37,99,235,.12);color:#7ec8fd}
-.tp{background:rgba(124,58,237,.14);color:#c4b5fd}
-/* Quality list */
-.rlabel{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);margin-bottom:10px;display:block}
-.qlist{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;max-height:320px;overflow-y:auto}
-.qi{display:flex;align-items:center;justify-content:space-between;background:var(--d2);border:1.5px solid var(--b2);border-radius:13px;padding:11px 13px;cursor:pointer;transition:all .18s}
-.qi:hover{background:var(--d3);border-color:rgba(0,229,170,.35);transform:translateX(2px)}
-.qi.on{border-color:rgba(0,229,170,.6);background:rgba(0,229,170,.06)}
-.qi-l{display:flex;align-items:center;gap:9px}
-.qi-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--b3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s}
-.qi.on .qi-dot{border-color:var(--g);background:var(--g)}
-.qi.on .qi-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:#000}
-.qi-name{font-size:13.5px;font-weight:800;color:var(--t1)}
-.qi-sub{font-size:11px;color:var(--t2);margin-top:1px}
-.qi-fmt{font-size:10px;font-weight:800;padding:3px 8px;border-radius:100px;flex-shrink:0}
-.fv{background:rgba(0,229,170,.12);color:var(--g)}
-.fa{background:rgba(37,99,235,.12);color:#7ec8fd}
-/* Big download button */
-.dlbtn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:16px;border-radius:15px;background:linear-gradient(135deg,#1d4ed8,#059669);color:#fff;font-size:15.5px;font-weight:800;transition:all .22s;box-shadow:0 4px 22px rgba(37,99,235,.3);margin-bottom:11px}
-.dlbtn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,99,235,.48)}
-.dlbtn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.dlbtn svg{width:17px;height:17px;flex-shrink:0}
-/* Progress */
-.prog{display:none;margin-bottom:12px}
-.prog.show{display:block}
-.prog-bar{height:9px;background:var(--b2);border-radius:100px;overflow:hidden;margin-bottom:6px}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--b));border-radius:100px;width:0%;transition:width .4s}
-.prog-txt{font-size:12px;color:var(--t2);font-weight:600;text-align:center}
-/* Extra buttons */
-.extras{display:flex;flex-direction:column;gap:7px}
-.exbtn{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;border:1px solid var(--b2);background:var(--d2);color:var(--t1);font-size:12.5px;font-weight:600;transition:all .2s;text-align:left;width:100%}
-.exbtn:hover{background:rgba(0,229,170,.07);color:var(--g);transform:translateX(3px);border-color:rgba(0,229,170,.3)}
-.exbtn svg{width:13px;height:13px;flex-shrink:0;opacity:.7}
-.exbtn-q{margin-left:auto;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(0,229,170,.12);color:var(--g)}
-/* Platform section */
-.plsec{margin-top:32px}
-.pllbl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);text-align:center;margin-bottom:16px}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.pc{background:var(--g1);border:1.5px solid var(--b1);border-radius:16px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s;text-align:center}
-.pc:hover{background:var(--g2);border-color:var(--b2);transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.25)}
-.pc-logo{width:48px;height:48px;border-radius:12px;overflow:hidden;flex-shrink:0}
-.pc-logo img{width:100%;height:100%;object-fit:cover;display:block}
-.pc-name{font-size:12px;font-weight:700;color:var(--t2)}
-.pc:hover .pc-name{color:var(--t1)}
-/* Features */
-.feats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}
-.feat{background:var(--g1);border:1px solid var(--b1);border-radius:18px;padding:22px 14px;text-align:center;transition:all .2s}
-.feat:hover{background:var(--g2);transform:translateY(-3px);border-color:var(--b2)}
-.feat i{font-size:26px;display:block;margin-bottom:10px}
-.feat strong{display:block;font-size:13.5px;font-weight:800;color:var(--t1);margin-bottom:4px}
-.feat span{font-size:12px;color:var(--t2);line-height:1.5}
-/* FAQ */
-.faqsec{margin-top:36px}
-.faqtitle{font-size:22px;font-weight:900;text-align:center;color:var(--t1);margin-bottom:18px}
-.faq{display:flex;flex-direction:column;gap:8px}
-.faqitem{background:var(--g1);border:1px solid var(--b2);border-radius:14px;overflow:hidden}
-.faqq{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-size:14px;font-weight:700;color:var(--t1);transition:background .18s}
-.faqq:hover{background:var(--g2)}
-.faqq svg{width:16px;height:16px;color:var(--t2);flex-shrink:0;transition:transform .2s}
-.faqitem.open .faqq svg{transform:rotate(180deg)}
-.faqa{display:none;padding:0 20px 16px;font-size:13px;color:var(--t2);line-height:1.7}
-.faqitem.open .faqa{display:block}
-/* Responsive */
+#mdlWrap button{cursor:pointer;font-family:'Nunito',sans-serif;border:none;outline:none;background:none}
+#mdlWrap input{font-family:'Nunito',sans-serif;outline:none;border:none;background:none}
+
+/* ── Animated background orbs ── */
+#mdlWrap .z-orb{
+  position:absolute;border-radius:50%;filter:blur(110px);
+  pointer-events:none;z-index:0;
+  animation:zob 14s ease-in-out infinite alternate
+}
+#mdlWrap .z-orb:nth-child(1){width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.18),transparent 70%);top:-200px;left:-120px;animation-duration:11s}
+#mdlWrap .z-orb:nth-child(2){width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.14),transparent 70%);bottom:-160px;right:-100px;animation-duration:15s;animation-delay:-6s}
+#mdlWrap .z-orb:nth-child(3){width:380px;height:380px;background:radial-gradient(circle,rgba(0,229,170,.09),transparent 70%);top:42%;left:44%;animation-duration:9s;animation-delay:-3s}
+@keyframes zob{to{transform:translate(28px,40px) scale(1.1)}}
+#mdlWrap .z-gbg{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:50px 50px
+}
+
+/* ── Layout ── */
+#mdlWrap .z-pg{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:52px 24px 90px}
+
+/* ── Hero ── */
+#mdlWrap .z-hero{text-align:center;margin-bottom:32px}
+#mdlWrap .z-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,229,170,.08);border:1px solid rgba(0,229,170,.25);
+  border-radius:100px;padding:6px 18px;font-size:11px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:18px
+}
+#mdlWrap .z-bdot{width:7px;height:7px;border-radius:50%;background:var(--g);animation:zpl 1.5s infinite;flex-shrink:0}
+@keyframes zpl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+#mdlWrap .z-hero h1{
+  font-size:clamp(28px,5vw,60px);font-weight:900;line-height:1.06;
+  letter-spacing:-.03em;margin-bottom:14px;
+  background:linear-gradient(135deg,#fff 20%,var(--g) 55%,var(--b) 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+#mdlWrap .z-hero p{color:var(--t2);font-size:15px;font-weight:500;max-width:560px;margin:0 auto;line-height:1.75}
+
+/* ── Tabs ── */
+#mdlWrap .z-tabs{
+  display:flex;justify-content:center;gap:4px;margin-bottom:22px;
+  background:var(--g1);border:1px solid var(--b2);border-radius:100px;
+  padding:5px;width:fit-content;margin-left:auto;margin-right:auto
+}
+#mdlWrap .z-tab{display:flex;align-items:center;gap:7px;padding:10px 28px;border-radius:100px;color:var(--t2);font-size:13.5px;font-weight:700;transition:all .22s;white-space:nowrap}
+#mdlWrap .z-tab:hover{color:var(--t1);background:var(--g2)}
+#mdlWrap .z-tab.on{background:linear-gradient(135deg,var(--d2),var(--d3));color:var(--g);border:1px solid rgba(0,229,170,.32);box-shadow:0 2px 16px rgba(0,229,170,.15)}
+#mdlWrap .z-tab svg{width:14px;height:14px;flex-shrink:0}
+
+/* ── Input card ── */
+#mdlWrap .z-card{background:var(--g1);border:1px solid var(--b2);border-radius:24px;padding:24px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);margin-bottom:16px}
+#mdlWrap .z-irow{display:flex;gap:10px;margin-bottom:14px;align-items:stretch}
+#mdlWrap .z-uinp{
+  flex:1;min-width:0;background:var(--d1);border:1.5px solid var(--b2);
+  border-radius:14px;padding:16px 20px;color:var(--t1);font-size:14px;
+  font-weight:600;transition:border-color .2s,box-shadow .2s;width:100%
+}
+#mdlWrap .z-uinp::placeholder{color:var(--t2);font-weight:500}
+#mdlWrap .z-uinp:focus{border-color:rgba(0,229,170,.5);box-shadow:0 0 0 3px rgba(0,229,170,.08)}
+#mdlWrap .z-gbtn{
+  display:flex;align-items:center;gap:8px;padding:16px 30px;
+  background:linear-gradient(135deg,#1d4ed8,#059669);border-radius:14px;
+  color:#fff;font-size:14px;font-weight:800;transition:all .22s;
+  white-space:nowrap;box-shadow:0 4px 22px rgba(37,99,235,.35);flex-shrink:0
+}
+#mdlWrap .z-gbtn:hover:not([disabled]){transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,99,235,.5)}
+#mdlWrap .z-gbtn:active:not([disabled]){transform:translateY(0)}
+#mdlWrap .z-gbtn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+#mdlWrap .z-gbtn svg{width:16px;height:16px;flex-shrink:0}
+
+/* ── Platform detect ── */
+#mdlWrap .z-det{display:none;align-items:center;gap:9px;background:rgba(0,229,170,.07);border:1px solid rgba(0,229,170,.22);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;color:#5eead4;margin-bottom:12px}
+#mdlWrap .z-det.show{display:flex}
+
+/* ── Quality pills ── */
+#mdlWrap .z-opts{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+#mdlWrap .z-ol{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);margin-right:2px}
+#mdlWrap .z-op{padding:7px 16px;border-radius:100px;border:1px solid var(--b2);background:var(--g1);color:var(--t2);font-size:12px;font-weight:700;transition:all .18s}
+#mdlWrap .z-op:hover,#mdlWrap .z-op.on{background:rgba(0,229,170,.1);border-color:rgba(0,229,170,.45);color:var(--g);box-shadow:0 0 10px rgba(0,229,170,.15)}
+
+/* ── Status dot ── */
+#mdlWrap .z-strow{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:var(--t2)}
+#mdlWrap .z-sdot{width:7px;height:7px;border-radius:50%;background:var(--g);flex-shrink:0;transition:background .3s}
+#mdlWrap .z-sdot.busy{background:var(--y);animation:zpl .9s infinite}
+#mdlWrap .z-sdot.err{background:var(--r)}
+
+/* ── Wake-up bar (Render cold start) ── */
+#mdlWrap .z-wake{display:none;align-items:center;gap:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#fbbf24;font-weight:600}
+#mdlWrap .z-wake.show{display:flex}
+#mdlWrap .z-wake-body{flex:1}
+#mdlWrap .z-wake-txt{margin-bottom:6px}
+#mdlWrap .z-wake-track{height:4px;background:rgba(245,158,11,.18);border-radius:4px;overflow:hidden}
+#mdlWrap .z-wake-fill{height:100%;background:linear-gradient(90deg,var(--y),#fb923c);border-radius:4px;width:0%;transition:width .5s linear}
+
+/* ── Loader ── */
+#mdlWrap .z-ldr{display:none;flex-direction:column;align-items:center;gap:12px;padding:32px;color:var(--t2);font-size:14px;font-weight:600;text-align:center}
+#mdlWrap .z-ldr.show{display:flex}
+#mdlWrap .z-spin{width:30px;height:30px;border:3px solid var(--b2);border-top-color:var(--g);border-radius:50%;animation:zsp .7s linear infinite}
+@keyframes zsp{to{transform:rotate(360deg)}}
+
+/* ── Error box ── */
+#mdlWrap .z-ebox{display:none;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.24);border-radius:16px;padding:18px 22px;margin-top:14px}
+#mdlWrap .z-ebox.show{display:block}
+#mdlWrap .z-ebox-h{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+#mdlWrap .z-ebox-h svg{width:17px;height:17px;color:var(--r);flex-shrink:0}
+#mdlWrap .z-ebox-h b{color:var(--r);font-size:14px}
+#mdlWrap .z-ebox p{font-size:13px;color:var(--t2);line-height:1.6}
+#mdlWrap .z-ebox code{display:block;margin-top:8px;padding:8px 12px;background:var(--d2);border-radius:8px;font-size:11px;color:var(--g);font-family:monospace;word-break:break-all}
+
+/* ── Result ── */
+#mdlWrap .z-result{display:none;margin-top:18px}
+#mdlWrap .z-result.show{display:block;animation:zsi .32s ease}
+@keyframes zsi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+#mdlWrap .z-rsplit{display:grid;grid-template-columns:1fr 1fr;gap:18px;background:var(--g1);border:1px solid var(--b2);border-radius:24px;padding:24px}
+
+/* ── Media preview ── */
+#mdlWrap .z-mbox{background:#000;border:1px solid var(--b2);border-radius:14px;overflow:hidden;margin-bottom:12px;position:relative;min-height:60px}
+#mdlWrap .z-mbox video{width:100%;display:block;max-height:320px;background:#000}
+#mdlWrap .z-mbox audio{width:100%;display:block;padding:14px;background:var(--d1)}
+#mdlWrap .z-tbox{position:relative;cursor:pointer;border-radius:14px;overflow:hidden;margin-bottom:12px;border:1px solid var(--b2);background:var(--d2)}
+#mdlWrap .z-tbox img{width:100%;max-height:260px;object-fit:cover;display:block}
+#mdlWrap .z-pov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.38);transition:background .2s}
+#mdlWrap .z-tbox:hover .z-pov{background:rgba(0,0,0,.56)}
+#mdlWrap .z-pbtn{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.93);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.45);transition:transform .15s}
+#mdlWrap .z-tbox:hover .z-pbtn{transform:scale(1.06)}
+#mdlWrap .z-pbtn svg{width:26px;height:26px;margin-left:4px;color:#000}
+#mdlWrap .z-abadge{position:absolute;top:8px;right:8px;background:var(--g);color:#000;font-size:10px;font-weight:800;padding:3px 9px;border-radius:7px;z-index:3;pointer-events:none}
+
+/* ── Image grid ── */
+#mdlWrap .z-igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+#mdlWrap .z-igitem{border-radius:9px;overflow:hidden;border:1px solid var(--b2);position:relative}
+#mdlWrap .z-igitem img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+#mdlWrap .z-igov{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s;cursor:pointer;border-radius:9px}
+#mdlWrap .z-igitem:hover .z-igov{opacity:1}
+#mdlWrap .z-igov button{font-size:11px;font-weight:800;background:var(--g);color:#000;padding:5px 11px;border-radius:7px}
+
+/* ── Meta ── */
+#mdlWrap .z-meta{background:var(--d1);border:1px solid var(--b2);border-radius:13px;padding:14px}
+#mdlWrap .z-meta-title{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:8px;color:var(--t1)}
+#mdlWrap .z-meta-rows{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+#mdlWrap .z-meta-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)}
+#mdlWrap .z-meta-row svg{width:13px;height:13px;flex-shrink:0}
+#mdlWrap .z-tags{display:flex;flex-wrap:wrap;gap:5px}
+#mdlWrap .z-tag{padding:3px 9px;border-radius:7px;font-size:11px;font-weight:700}
+#mdlWrap .z-tg{background:rgba(0,229,170,.12);color:var(--g)}
+#mdlWrap .z-tb{background:rgba(37,99,235,.12);color:#7ec8fd}
+#mdlWrap .z-tp{background:rgba(124,58,237,.14);color:#c4b5fd}
+
+/* ── Quality list ── */
+#mdlWrap .z-rlabel{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);margin-bottom:10px;display:block}
+#mdlWrap .z-qlist{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;max-height:320px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+#mdlWrap .z-qlist::-webkit-scrollbar{width:4px}
+#mdlWrap .z-qlist::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+#mdlWrap .z-qi{display:flex;align-items:center;justify-content:space-between;background:var(--d2);border:1.5px solid var(--b2);border-radius:13px;padding:11px 13px;cursor:pointer;transition:all .18s;user-select:none}
+#mdlWrap .z-qi:hover{background:var(--d3);border-color:rgba(0,229,170,.35);transform:translateX(2px)}
+#mdlWrap .z-qi.on{border-color:rgba(0,229,170,.6);background:rgba(0,229,170,.06)}
+#mdlWrap .z-qi-l{display:flex;align-items:center;gap:9px;min-width:0}
+#mdlWrap .z-qi-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--b3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s}
+#mdlWrap .z-qi.on .z-qi-dot{border-color:var(--g);background:var(--g)}
+#mdlWrap .z-qi.on .z-qi-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:#000}
+#mdlWrap .z-qi-name{font-size:13.5px;font-weight:800;color:var(--t1)}
+#mdlWrap .z-qi-sub{font-size:11px;color:var(--t2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+#mdlWrap .z-qi-fmt{font-size:10px;font-weight:800;padding:3px 8px;border-radius:100px;flex-shrink:0}
+#mdlWrap .z-fv{background:rgba(0,229,170,.12);color:var(--g)}
+#mdlWrap .z-fa{background:rgba(37,99,235,.12);color:#7ec8fd}
+
+/* ── Big download button ── */
+#mdlWrap .z-dlbtn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:16px;border-radius:15px;background:linear-gradient(135deg,#1d4ed8,#059669);color:#fff;font-size:15.5px;font-weight:800;transition:all .22s;box-shadow:0 4px 22px rgba(37,99,235,.3);margin-bottom:11px}
+#mdlWrap .z-dlbtn:hover:not([disabled]){transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,99,235,.48)}
+#mdlWrap .z-dlbtn[disabled]{opacity:.6;cursor:not-allowed;transform:none}
+#mdlWrap .z-dlbtn svg{width:17px;height:17px;flex-shrink:0}
+
+/* ── Progress ── */
+#mdlWrap .z-prog{display:none;margin-bottom:12px}
+#mdlWrap .z-prog.show{display:block}
+#mdlWrap .z-prog-bar{height:9px;background:var(--b2);border-radius:100px;overflow:hidden;margin-bottom:6px}
+#mdlWrap .z-prog-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--b));border-radius:100px;width:0%;transition:width .4s}
+#mdlWrap .z-prog-txt{font-size:12px;color:var(--t2);font-weight:600;text-align:center}
+
+/* ── Extra buttons ── */
+#mdlWrap .z-extras{display:flex;flex-direction:column;gap:7px}
+#mdlWrap .z-exbtn{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;border:1px solid var(--b2);background:var(--d2);color:var(--t1);font-size:12.5px;font-weight:600;transition:all .2s;text-align:left;width:100%}
+#mdlWrap .z-exbtn:hover{background:rgba(0,229,170,.07);color:var(--g);transform:translateX(3px);border-color:rgba(0,229,170,.3)}
+#mdlWrap .z-exbtn svg{width:13px;height:13px;flex-shrink:0;opacity:.7}
+#mdlWrap .z-exbtn-q{margin-left:auto;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(0,229,170,.12);color:var(--g)}
+
+/* ── Platform grid ── */
+#mdlWrap .z-plsec{margin-top:32px}
+#mdlWrap .z-pllbl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);text-align:center;margin-bottom:16px}
+#mdlWrap .z-pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+#mdlWrap .z-pc{background:var(--g1);border:1.5px solid var(--b1);border-radius:16px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s;text-align:center}
+#mdlWrap .z-pc:hover{background:var(--g2);border-color:var(--b2);transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#mdlWrap .z-pc-logo{width:48px;height:48px;border-radius:12px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#mdlWrap .z-pc-logo svg{width:48px;height:48px;display:block}
+#mdlWrap .z-pc-name{font-size:12px;font-weight:700;color:var(--t2)}
+#mdlWrap .z-pc:hover .z-pc-name{color:var(--t1)}
+
+/* ── Features ── */
+#mdlWrap .z-feats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}
+#mdlWrap .z-feat{background:var(--g1);border:1px solid var(--b1);border-radius:18px;padding:22px 14px;text-align:center;transition:all .2s}
+#mdlWrap .z-feat:hover{background:var(--g2);transform:translateY(-3px);border-color:var(--b2)}
+#mdlWrap .z-feat i{font-size:26px;display:block;margin-bottom:10px}
+#mdlWrap .z-feat strong{display:block;font-size:13.5px;font-weight:800;color:var(--t1);margin-bottom:4px}
+#mdlWrap .z-feat span{font-size:12px;color:var(--t2);line-height:1.5}
+
+/* ── FAQ ── */
+#mdlWrap .z-faqsec{margin-top:36px}
+#mdlWrap .z-faqtitle{font-size:22px;font-weight:900;text-align:center;color:var(--t1);margin-bottom:18px}
+#mdlWrap .z-faq{display:flex;flex-direction:column;gap:8px}
+#mdlWrap .z-faqitem{background:var(--g1);border:1px solid var(--b2);border-radius:14px;overflow:hidden}
+#mdlWrap .z-faqq{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-size:14px;font-weight:700;color:var(--t1);transition:background .18s;gap:12px}
+#mdlWrap .z-faqq:hover{background:var(--g2)}
+#mdlWrap .z-faqq svg{width:16px;height:16px;color:var(--t2);flex-shrink:0;transition:transform .2s}
+#mdlWrap .z-faqitem.open .z-faqq svg{transform:rotate(180deg)}
+#mdlWrap .z-faqa{display:none;padding:0 20px 16px;font-size:13px;color:var(--t2);line-height:1.7}
+#mdlWrap .z-faqitem.open .z-faqa{display:block}
+
+/* ── Responsive ── */
 @media(max-width:720px){
-  .rsplit{grid-template-columns:1fr}
-  .pg{padding:32px 16px 60px}
-  .irow{flex-direction:column}
-  .gbtn{justify-content:center}
-  .feats{grid-template-columns:repeat(2,1fr)}
-  .tabs{flex-wrap:wrap;border-radius:18px;width:100%}
-  .pgrid{grid-template-columns:repeat(auto-fill,minmax(95px,1fr))}
+  #mdlWrap .z-rsplit{grid-template-columns:1fr}
+  #mdlWrap .z-pg{padding:32px 16px 60px}
+  #mdlWrap .z-irow{flex-direction:column}
+  #mdlWrap .z-gbtn{justify-content:center}
+  #mdlWrap .z-feats{grid-template-columns:repeat(2,1fr)}
+  #mdlWrap .z-tabs{flex-wrap:wrap;border-radius:18px;width:100%}
+  #mdlWrap .z-pgrid{grid-template-columns:repeat(auto-fill,minmax(95px,1fr))}
+}
+@media(max-width:480px){
+  #mdlWrap .z-tab{padding:10px 16px;font-size:12.5px}
+  #mdlWrap .z-hero h1{font-size:clamp(22px,6.5vw,36px)}
 }
 </style>
 </head>
 <body>
-<div class="orb"></div><div class="orb"></div><div class="orb"></div>
-<div class="gbg"></div>
-<div class="pg">
 
-<!-- HERO -->
-<div class="hero">
-  <div class="badge"><span class="bdot"></span>Unlimited &middot; Free &middot; Direct Download &middot; No Signup</div>
-  <h1 id="H1">Download Video, Audio &amp; Images<br>Without Watermark</h1>
-  <p id="Sub">TikTok, Instagram, YouTube, Twitter &amp; 1000+ platforms &mdash; HD quality, completely free</p>
-</div>
+<div id="mdlWrap">
+  <div class="z-orb"></div>
+  <div class="z-orb"></div>
+  <div class="z-orb"></div>
+  <div class="z-gbg"></div>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab on" data-t="video">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Video
-  </button>
-  <button class="tab" data-t="audio">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Audio
-  </button>
-  <button class="tab" data-t="image">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image
-  </button>
-</div>
+  <div class="z-pg">
 
-<!-- INPUT CARD -->
-<div class="card">
-  <div class="irow">
-    <input class="uinp" id="Url" type="url" placeholder="Paste any link: YouTube, TikTok, Instagram, Twitter, Facebook..." autocomplete="off" spellcheck="false"/>
-    <button class="gbtn" id="Go">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download
-    </button>
-  </div>
-  <div class="det" id="Det">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-    <span id="DetTxt"></span>
-  </div>
-  <div id="Vopts" class="opts">
-    <span class="ol">Quality:</span>
-    <button class="op on" data-q="">Best</button>
-    <button class="op" data-q="2160">4K</button>
-    <button class="op" data-q="1440">2K</button>
-    <button class="op" data-q="1080">1080p</button>
-    <button class="op" data-q="720">720p</button>
-    <button class="op" data-q="480">480p</button>
-    <button class="op" data-q="360">360p</button>
-    <button class="op on" id="opWm" style="margin-left:8px">No Watermark</button>
-  </div>
-  <div id="Aopts" style="display:none;flex-wrap:wrap;gap:7px;align-items:center;margin-top:10px">
-    <span class="ol">Format:</span>
-    <button class="op on" data-af="mp3">MP3</button>
-    <button class="op" data-af="ogg">OGG</button>
-    <button class="op" data-af="wav">WAV</button>
-    <span class="ol" style="margin-left:8px">Bitrate:</span>
-    <button class="op on" data-ab="128">128k</button>
-    <button class="op" data-ab="320">320k</button>
-  </div>
-  <div class="strow"><span class="sdot" id="Sdot"></span><span id="Stxt">Ready &mdash; paste any link above</span></div>
-</div>
-
-<!-- LOADER -->
-<div class="ldr" id="Ldr"><div class="spin"></div><span>Fetching download links...</span></div>
-
-<!-- ERROR -->
-<div class="ebox" id="Err">
-  <div class="ebox-h">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <b id="Et">Error</b>
-  </div>
-  <p id="Em">Please try again.</p>
-  <code id="Ec" style="display:none"></code>
-</div>
-
-<!-- RESULT -->
-<div class="result" id="Result">
-  <div class="rsplit">
-    <div>
-      <div id="MediaBox"></div>
-      <div id="Imgrid"></div>
-      <div class="meta" id="Meta" style="display:none">
-        <div class="meta-title" id="MTitle"></div>
-        <div class="meta-rows" id="MRows"></div>
-        <div class="tags" id="MTags"></div>
-      </div>
+    <!-- ══ HERO ══ -->
+    <div class="z-hero">
+      <div class="z-badge"><span class="z-bdot"></span>Unlimited &middot; Free &middot; Direct Download &middot; No Signup</div>
+      <h1 id="zH1">Download Video, Audio &amp; Images<br>Without Watermark</h1>
+      <p id="zSub">TikTok, Instagram, YouTube, Twitter &amp; 1000+ platforms &mdash; HD quality, completely free</p>
     </div>
-    <div>
-      <span class="rlabel">Choose Quality &amp; Download</span>
-      <div class="qlist" id="Qlist"></div>
-      <button class="dlbtn" id="DlBtn" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span id="DlTxt">Select quality above</span>
+
+    <!-- ══ TABS ══ -->
+    <div class="z-tabs">
+      <button class="z-tab on" data-t="video">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Video
       </button>
-      <div class="prog" id="Prog">
-        <div class="prog-bar"><div class="prog-fill" id="PF"></div></div>
-        <div class="prog-txt" id="PT"></div>
+      <button class="z-tab" data-t="audio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Audio
+      </button>
+      <button class="z-tab" data-t="image">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image
+      </button>
+    </div>
+
+    <!-- ══ INPUT CARD ══ -->
+    <div class="z-card">
+
+      <!-- Cold-start wake-up progress bar -->
+      <div class="z-wake" id="zWake">
+        <span style="font-size:18px;flex-shrink:0">&#9203;</span>
+        <div class="z-wake-body">
+          <div class="z-wake-txt" id="zWakeTxt">Server waking up &#8212; free servers sleep after inactivity (~30s)...</div>
+          <div class="z-wake-track"><div class="z-wake-fill" id="zWakeFill"></div></div>
+        </div>
       </div>
-      <div class="extras" id="Extras"></div>
-    </div>
-  </div>
-</div>
 
-<!-- PLATFORMS -->
-<div class="plsec">
-  <div class="pllbl">Supported Platforms (1000+ via yt-dlp)</div>
-  <div class="pgrid" id="Pgrid"></div>
-</div>
+      <div class="z-irow">
+        <input class="z-uinp" id="zUrl" type="url"
+          placeholder="Paste any link: YouTube, TikTok, Instagram, Twitter, Facebook..."
+          autocomplete="off" spellcheck="false"/>
+        <button class="z-gbtn" id="zGo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+      </div>
 
-<!-- FEATURES - match screenshot exactly -->
-<div class="feats">
-  <div class="feat"><i>&#9889;</i><strong>Instant Preview</strong><span>Plays on this page</span></div>
-  <div class="feat"><i>&#128167;</i><strong>No Watermark</strong><span>Clean originals</span></div>
-  <div class="feat"><i>&#127381;</i><strong>100% Free</strong><span>No limits ever</span></div>
-  <div class="feat"><i>&#128241;</i><strong>All Devices</strong><span>Mobile ready</span></div>
-</div>
+      <div class="z-det" id="zDet">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="zDetTxt"></span>
+      </div>
 
-<!-- FAQ -->
-<div class="faqsec">
-  <div class="faqtitle">FAQ</div>
-  <div class="faq">
-    <div class="faqitem">
-      <div class="faqq">Does TikTok video play on this page?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
-      <div class="faqa">Yes! TikTok videos play directly in the preview player. Click the thumbnail, the video loads and plays with audio. You can then choose HD or SD quality to download without watermark.</div>
-    </div>
-    <div class="faqitem">
-      <div class="faqq">Does YouTube play on this page?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
-      <div class="faqa">Yes! YouTube videos preview here. For 1080p+ the video and audio are separate streams (DASH format) &mdash; our player automatically syncs both so you hear audio while watching. Download goes directly from YouTube CDN &mdash; instant start.</div>
-    </div>
-    <div class="faqitem">
-      <div class="faqq">Does Instagram/Twitter/Facebook play on this page?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
-      <div class="faqa">Yes! All major platforms are supported. Instagram reels, stories and carousels, Twitter/X videos, Facebook videos &mdash; all preview and download directly. For image carousels you get individual save buttons plus a Download All option.</div>
-    </div>
-  </div>
-</div>
+      <!-- Video quality pills -->
+      <div id="zVopts" class="z-opts">
+        <span class="z-ol">Quality:</span>
+        <button class="z-op on" data-q="">Best</button>
+        <button class="z-op" data-q="2160">4K</button>
+        <button class="z-op" data-q="1440">2K</button>
+        <button class="z-op" data-q="1080">1080p</button>
+        <button class="z-op" data-q="720">720p</button>
+        <button class="z-op" data-q="480">480p</button>
+        <button class="z-op" data-q="360">360p</button>
+        <button class="z-op on" id="zOpWm" style="margin-left:8px">No Watermark</button>
+      </div>
 
-</div><!-- end .pg -->
+      <!-- Audio pills -->
+      <div id="zAopts" style="display:none;flex-wrap:wrap;gap:7px;align-items:center;margin-top:10px">
+        <span class="z-ol">Format:</span>
+        <button class="z-op on" data-af="mp3">MP3</button>
+        <button class="z-op" data-af="ogg">OGG</button>
+        <button class="z-op" data-af="wav">WAV</button>
+        <span class="z-ol" style="margin-left:8px">Bitrate:</span>
+        <button class="z-op on" data-ab="128">128k</button>
+        <button class="z-op" data-ab="320">320k</button>
+      </div>
+
+      <div class="z-strow">
+        <span class="z-sdot" id="zSdot"></span>
+        <span id="zStxt">Ready &#8212; paste any link above</span>
+      </div>
+    </div>
+
+    <!-- ══ LOADER ══ -->
+    <div class="z-ldr" id="zLdr">
+      <div class="z-spin"></div>
+      <span id="zLdrTxt">Fetching download links...</span>
+    </div>
+
+    <!-- ══ ERROR BOX ══ -->
+    <div class="z-ebox" id="zErr">
+      <div class="z-ebox-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <b id="zEt">Error</b>
+      </div>
+      <p id="zEm">Please try again.</p>
+      <code id="zEc" style="display:none"></code>
+    </div>
+
+    <!-- ══ RESULT ══ -->
+    <div class="z-result" id="zResult">
+      <div class="z-rsplit">
+        <!-- LEFT col: preview + meta -->
+        <div>
+          <div id="zMediaBox"></div>
+          <div id="zImgrid"></div>
+          <div class="z-meta" id="zMeta" style="display:none">
+            <div class="z-meta-title" id="zMTitle"></div>
+            <div class="z-meta-rows" id="zMRows"></div>
+            <div class="z-tags" id="zMTags"></div>
+          </div>
+        </div>
+        <!-- RIGHT col: quality list + download -->
+        <div>
+          <span class="z-rlabel">Choose Quality &amp; Download</span>
+          <div class="z-qlist" id="zQlist"></div>
+          <button class="z-dlbtn" id="zDlBtn" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span id="zDlTxt">Select quality above</span>
+          </button>
+          <div class="z-prog" id="zProg">
+            <div class="z-prog-bar"><div class="z-prog-fill" id="zPF"></div></div>
+            <div class="z-prog-txt" id="zPT"></div>
+          </div>
+          <div class="z-extras" id="zExtras"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PLATFORMS ══ -->
+    <div class="z-plsec">
+      <div class="z-pllbl">Supported Platforms (1000+ via yt-dlp)</div>
+      <div class="z-pgrid" id="zPgrid"></div>
+    </div>
+
+    <!-- ══ FEATURES ══ -->
+    <div class="z-feats">
+      <div class="z-feat"><i>&#9889;</i><strong>Instant Preview</strong><span>Plays on this page</span></div>
+      <div class="z-feat"><i>&#128167;</i><strong>No Watermark</strong><span>Clean originals</span></div>
+      <div class="z-feat"><i>&#127381;</i><strong>100% Free</strong><span>No limits ever</span></div>
+      <div class="z-feat"><i>&#128241;</i><strong>All Devices</strong><span>Mobile ready</span></div>
+    </div>
+
+    <!-- ══ FAQ ══ -->
+    <div class="z-faqsec">
+      <div class="z-faqtitle">FAQ</div>
+      <div class="z-faq">
+        <div class="z-faqitem">
+          <div class="z-faqq">Does TikTok video play on this page?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="z-faqa">Yes! TikTok videos play directly in the preview player. Click the thumbnail, the video loads and plays with audio. You can then choose HD or SD quality to download without watermark.</div>
+        </div>
+        <div class="z-faqitem">
+          <div class="z-faqq">Does YouTube play on this page?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="z-faqa">Yes! YouTube videos preview here. For 1080p+ the video and audio are separate streams (DASH format) — our player automatically syncs both so you hear audio while watching.</div>
+        </div>
+        <div class="z-faqitem">
+          <div class="z-faqq">Does Instagram/Twitter/Facebook play on this page?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="z-faqa">Yes! All major platforms are supported. Instagram reels, stories and carousels, Twitter/X videos, Facebook videos — all preview and download directly.</div>
+        </div>
+        <div class="z-faqitem">
+          <div class="z-faqq">Why does it sometimes take 30 seconds on first use?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="z-faqa">The backend runs on a free server that sleeps when idle. The first request wakes it up — a progress bar shows you the status. After that, all downloads are instant.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.z-pg -->
+</div><!-- /#mdlWrap -->
 
 <script>
-var API = 'https://media-downloader-mnfd.onrender.com';
+/* ═══════════════════════════════════════════════════════════════
+   IIFE — no global scope pollution, safe inside WordPress/Elementor
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
 
-/* Platform logos using real-looking SVG icons */
+/* ── CONFIG ──────────────────────────────────────────────────
+   API points to YOUR Cloudflare Worker which proxies to Render.
+   The Worker handles: CORS, KV cache, cold-start retries,
+   /api/stream and /api/merge passthrough.
+   ──────────────────────────────────────────────────────────── */
+var API = 'https://billowing-butterfly-a8be.kalpeshraval947.workers.dev';
+
+/* ── PLATFORMS ───────────────────────────────────────────────── */
 var PLATS = [
   {k:'tiktok',n:'TikTok',re:/tiktok\.com|vm\.tiktok|vt\.tiktok/i,
    logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#010101"/><path d="M33.5 14.5a9 9 0 01-6.5-2.8v13.6a8.3 8.3 0 11-8.3-8.3l.4.01V21.2a3.8 3.8 0 10-3.8 3.8 3.8 3.8 0 003.8-3.8V10h4.6a9 9 0 009 8.9v-4.4z" fill="#fff"/></svg>'},
   {k:'youtube',n:'YouTube',re:/youtube\.com|youtu\.be/i,
    logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#FF0000"/><path d="M38 16.6s-.4-2.6-1.6-3.8c-1.5-1.6-3.2-1.6-4-1.7C27.6 11 24 11 24 11s-3.6 0-8.4.1c-.8.1-2.5.1-4 1.7-1.2 1.2-1.6 3.8-1.6 3.8S10 19.6 10 22.6v2.8c0 3 .4 6 .4 6s.4 2.6 1.6 3.8c1.5 1.6 3.5 1.5 4.4 1.7C19.6 37 24 37 24 37s3.6 0 8.4-.1c.8-.1 2.5-.1 4-1.7 1.2-1.2 1.6-3.8 1.6-3.8s.4-3 .4-6v-2.8c0-3-.4-6-.4-6zM21 28V19l8 4.5-8 4.5z" fill="#fff"/></svg>'},
   {k:'instagram',n:'Instagram',re:/instagram\.com/i,
-   logo:'<svg viewBox="0 0 48 48"><defs><radialGradient id="ig" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><rect width="48" height="48" rx="12" fill="url(#ig)"/><rect x="12" y="12" width="24" height="24" rx="7" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="24" cy="24" r="6.5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="32.5" cy="15.5" r="1.8" fill="#fff"/></svg>'},
+   logo:'<svg viewBox="0 0 48 48"><defs><radialGradient id="zig" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><rect width="48" height="48" rx="12" fill="url(#zig)"/><rect x="12" y="12" width="24" height="24" rx="7" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="24" cy="24" r="6.5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="32.5" cy="15.5" r="1.8" fill="#fff"/></svg>'},
   {k:'twitter',n:'Twitter / X',re:/twitter\.com|x\.com/i,
    logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#000"/><path d="M28.3 21.1L37 11h-2.1l-7.5 8.8-6-8.8H14l9.2 13.4L14 37h2.1l8.1-9.4 6.4 9.4H38L28.3 21.1zm-2.9 3.3l-.9-1.4L16.5 13h3.2l6.1 8.7.9 1.4 7.9 11.3h-3.2l-6.6-9.4-.2-.6z" fill="#fff"/></svg>'},
   {k:'facebook',n:'Facebook',re:/facebook\.com|fb\.com|fb\.watch/i,
@@ -355,366 +483,494 @@ var PLATS = [
    logo:'<svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#0065F5"/><path d="M36 12h-6V20a12.5 12.5 0 10.3 7A12.5 12.5 0 0030 12h6zm-12.5 21.5a7.5 7.5 0 110-15 7.5 7.5 0 010 15z" fill="#fff"/><path d="M21 19.5l9.5 5-9.5 5z" fill="#0065F5"/></svg>'}
 ];
 
-/* State */
-var S = {type:'video', nowm:true, curUrl:'', curFname:'', curAudioUrl:''};
+/* ── STATE ───────────────────────────────────────────────────── */
+var S = { type:'video', nowm:true, curUrl:'', curFname:'', curAudioUrl:'' };
+var wakeTimer = null;
 
-/* DOM refs */
-function G(id){return document.getElementById(id);}
-var elUrl=G('Url'), elGo=G('Go'), elLdr=G('Ldr'),
-    elErr=G('Err'), elEt=G('Et'), elEm=G('Em'), elEc=G('Ec'),
-    elResult=G('Result'), elMediaBox=G('MediaBox'), elImgrid=G('Imgrid'),
-    elMeta=G('Meta'), elMTitle=G('MTitle'), elMRows=G('MRows'), elMTags=G('MTags'),
-    elQlist=G('Qlist'), elDlBtn=G('DlBtn'), elDlTxt=G('DlTxt'),
-    elProg=G('Prog'), elPF=G('PF'), elPT=G('PT'),
-    elExtras=G('Extras'), elDet=G('Det'), elDetTxt=G('DetTxt'),
-    elSdot=G('Sdot'), elStxt=G('Stxt'),
-    elVopts=G('Vopts'), elAopts=G('Aopts'), elPgrid=G('Pgrid');
+/* ── DOM REFS ────────────────────────────────────────────────── */
+function G(id){ return document.getElementById(id); }
+var elUrl    = G('zUrl'),
+    elGo     = G('zGo'),
+    elLdr    = G('zLdr'),
+    elLdrTxt = G('zLdrTxt'),
+    elErr    = G('zErr'),
+    elEt     = G('zEt'),
+    elEm     = G('zEm'),
+    elEc     = G('zEc'),
+    elResult = G('zResult'),
+    elMBox   = G('zMediaBox'),
+    elIgrid  = G('zImgrid'),
+    elMeta   = G('zMeta'),
+    elMTitle = G('zMTitle'),
+    elMRows  = G('zMRows'),
+    elMTags  = G('zMTags'),
+    elQlist  = G('zQlist'),
+    elDlBtn  = G('zDlBtn'),
+    elDlTxt  = G('zDlTxt'),
+    elProg   = G('zProg'),
+    elPF     = G('zPF'),
+    elPT     = G('zPT'),
+    elExtras = G('zExtras'),
+    elDet    = G('zDet'),
+    elDetTxt = G('zDetTxt'),
+    elSdot   = G('zSdot'),
+    elStxt   = G('zStxt'),
+    elVopts  = G('zVopts'),
+    elAopts  = G('zAopts'),
+    elPgrid  = G('zPgrid'),
+    elWake   = G('zWake'),
+    elWakeTxt= G('zWakeTxt'),
+    elWakeFill=G('zWakeFill');
 
-/* Build platform grid */
+/* ── PLATFORM GRID ───────────────────────────────────────────── */
 PLATS.forEach(function(p){
   var d = document.createElement('div');
-  d.className = 'pc';
-  d.innerHTML = '<div class="pc-logo">'+p.logo+'</div><div class="pc-name">'+p.n+'</div>';
+  d.className = 'z-pc';
+  d.innerHTML = '<div class="z-pc-logo">' + p.logo + '</div><div class="z-pc-name">' + p.n + '</div>';
   d.onclick = function(){ elUrl.value=''; elUrl.placeholder='Paste a '+p.n+' link...'; elUrl.focus(); elDet.classList.remove('show'); };
   elPgrid.appendChild(d);
 });
 
-/* Tabs */
-document.querySelectorAll('.tab').forEach(function(t){
+/* ── TABS ────────────────────────────────────────────────────── */
+var wrap = G('mdlWrap');
+wrap.querySelectorAll('.z-tab').forEach(function(t){
   t.onclick = function(){
-    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});
+    wrap.querySelectorAll('.z-tab').forEach(function(x){ x.classList.remove('on'); });
     t.classList.add('on');
     S.type = t.dataset.t;
-    var titles = {video:'Download Video Without Watermark', audio:'Free Audio Downloader', image:'Image Downloader'};
-    var subs = {
+    var titles = { video:'Download Video, Audio & Images Without Watermark', audio:'Free Audio Downloader', image:'Image Downloader' };
+    var subs   = {
       video:'TikTok, Instagram, YouTube & 1000+ sites \u2014 HD, no watermark, completely free',
       audio:'Extract MP3/OGG/WAV from any video or music platform',
-      image:'Download images and carousels from any platform'
+      image:'Download images and carousels from any platform',
     };
-    G('H1').textContent = titles[S.type];
-    G('Sub').textContent = subs[S.type];
-    elVopts.style.display = S.type==='audio' ? 'none' : 'flex';
-    elAopts.style.display = S.type==='audio' ? 'flex' : 'none';
+    G('zH1').textContent  = titles[S.type];
+    G('zSub').textContent = subs[S.type];
+    elVopts.style.display = S.type === 'audio' ? 'none' : 'flex';
+    elAopts.style.display = S.type === 'audio' ? 'flex' : 'none';
     resetUI();
   };
 });
 
-/* Pills */
-document.querySelectorAll('[data-q]').forEach(function(p){
-  p.onclick = function(){document.querySelectorAll('[data-q]').forEach(function(x){x.classList.remove('on');});p.classList.add('on');};
-});
-document.querySelectorAll('[data-af]').forEach(function(p){
-  p.onclick = function(){document.querySelectorAll('[data-af]').forEach(function(x){x.classList.remove('on');});p.classList.add('on');};
-});
-document.querySelectorAll('[data-ab]').forEach(function(p){
-  p.onclick = function(){document.querySelectorAll('[data-ab]').forEach(function(x){x.classList.remove('on');});p.classList.add('on');};
-});
-
-/* No Watermark toggle */
-var elWm = G('opWm');
-if(elWm){ elWm.onclick = function(){S.nowm=!S.nowm; this.classList.toggle('on',S.nowm);}; }
-
-/* URL live detect */
-elUrl.addEventListener('input', function(){
-  var pp = findPlat(elUrl.value.trim());
-  if(pp){elDetTxt.textContent=pp.n+' link detected'; elDet.classList.add('show');}
-  else elDet.classList.remove('show');
-});
-elUrl.addEventListener('keydown', function(e){if(e.key==='Enter') elGo.click();});
-
-/* FAQ accordion */
-document.querySelectorAll('.faqq').forEach(function(q){
-  q.onclick = function(){
-    var item = this.parentNode;
-    var wasOpen = item.classList.contains('open');
-    document.querySelectorAll('.faqitem').forEach(function(i){i.classList.remove('open');});
-    if(!wasOpen) item.classList.add('open');
+/* ── QUALITY PILLS ───────────────────────────────────────────── */
+wrap.querySelectorAll('[data-q]').forEach(function(b){
+  b.onclick = function(){
+    wrap.querySelectorAll('[data-q]').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
   };
 });
+wrap.querySelectorAll('[data-af]').forEach(function(b){
+  b.onclick = function(){ wrap.querySelectorAll('[data-af]').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on'); };
+});
+wrap.querySelectorAll('[data-ab]').forEach(function(b){
+  b.onclick = function(){ wrap.querySelectorAll('[data-ab]').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on'); };
+});
+var elWm = G('zOpWm');
+if(elWm){ elWm.onclick = function(){ S.nowm = !S.nowm; this.classList.toggle('on', S.nowm); }; }
 
-/* Helpers */
-function sz(b){if(!b)return'';b=parseInt(b)||0;if(b>1e9)return(b/1e9).toFixed(1)+'GB';if(b>1e6)return(b/1e6).toFixed(1)+'MB';if(b>1e3)return(b/1e3).toFixed(0)+'KB';return b+'B';}
-function fN(n){if(!n)return'';n=parseInt(n)||0;if(n>1e9)return(n/1e9).toFixed(1)+'B';if(n>1e6)return(n/1e6).toFixed(1)+'M';if(n>1e3)return(n/1e3).toFixed(0)+'K';return String(n);}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function findPlat(url){for(var i=0;i<PLATS.length;i++){if(PLATS[i].re.test(url))return PLATS[i];}return null;}
+/* ── UTILS ───────────────────────────────────────────────────── */
+function sz(b){ if(!b)return''; b=parseInt(b)||0; if(b>1e9)return(b/1e9).toFixed(1)+'GB'; if(b>1e6)return(b/1e6).toFixed(1)+'MB'; if(b>1e3)return(b/1e3).toFixed(0)+'KB'; return b+'B'; }
+function fN(n){ if(!n)return''; n=parseInt(n)||0; if(n>1e9)return(n/1e9).toFixed(1)+'B'; if(n>1e6)return(n/1e6).toFixed(1)+'M'; if(n>1e3)return(n/1e3).toFixed(0)+'K'; return String(n); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function findPlat(url){ for(var i=0;i<PLATS.length;i++){ if(PLATS[i].re.test(url)) return PLATS[i]; } return null; }
+function setSt(s,m){ elSdot.className='z-sdot'+(s==='busy'?' busy':s==='err'?' err':''); elStxt.textContent=m||''; }
 
-/* Proxy URL - all media goes through Railway stream endpoint */
-function px(u, fname){
-  if(!u) return '';
-  var q = API+'/api/stream?url='+encodeURIComponent(u);
-  if(fname) q += '&filename='+encodeURIComponent(fname);
-  return q;
-}
-
-function setSt(s,m){
-  elSdot.className = 'sdot'+(s==='busy'?' busy':s==='err'?' err':'');
-  elStxt.textContent = m||'';
-}
-function showErr(t,m,code){
-  elLdr.classList.remove('show'); elGo.disabled=false;
-  elEt.textContent=t||'Error'; elEm.textContent=m||'Try again.';
-  if(code){elEc.textContent=code;elEc.style.display='block';}else{elEc.style.display='none';}
-  elErr.classList.add('show'); setSt('err',t);
-}
+/* ── RESET UI ────────────────────────────────────────────────── */
 function resetUI(){
-  elLdr.classList.remove('show'); elResult.classList.remove('show'); elErr.classList.remove('show');
-  elMediaBox.innerHTML=''; elImgrid.innerHTML=''; elQlist.innerHTML=''; elExtras.innerHTML='';
+  elLdr.classList.remove('show');
+  elResult.classList.remove('show');
+  elErr.classList.remove('show');
+  elMBox.innerHTML=''; elIgrid.innerHTML=''; elQlist.innerHTML=''; elExtras.innerHTML='';
   elMeta.style.display='none'; elMTitle.textContent=''; elMRows.innerHTML=''; elMTags.innerHTML='';
-  elDlBtn.disabled=true; elDlTxt.textContent='Select quality above';
+  elDlBtn.disabled=true; elDlBtn.onclick=null;
+  elDlTxt.textContent='Select quality above';
   elProg.classList.remove('show'); elPF.style.width='0%';
   S.curUrl=''; S.curFname=''; S.curAudioUrl='';
-  if(window._dashTimer){clearInterval(window._dashTimer);window._dashTimer=null;}
+  stopWake();
 }
 
-/* --- INSTANT DOWNLOAD ---------------------------------------
-   Browser opens proxy URL as <a download> = starts instantly.
-   No blob buffering. Works for any file size.                */
+/* ── SHOW ERROR ──────────────────────────────────────────────── */
+function showErr(t, m, code){
+  elLdr.classList.remove('show'); elGo.disabled=false;
+  elEt.textContent = t||'Error';
+  elEm.textContent = m||'Try again.';
+  if(code){ elEc.textContent=code; elEc.style.display='block'; }
+  else { elEc.style.display='none'; }
+  elErr.classList.add('show');
+  setSt('err', t);
+}
+
+/* ── WAKE-UP BAR ─────────────────────────────────────────────── */
+function startWake(totalSec){
+  var elapsed = 0;
+  elWake.classList.add('show');
+  elWakeFill.style.width = '0%';
+  elWakeTxt.textContent = 'Server waking up \u2014 please wait (~'+totalSec+'s)...';
+  if(wakeTimer) clearInterval(wakeTimer);
+  wakeTimer = setInterval(function(){
+    elapsed += 0.5;
+    var pct = Math.min((elapsed/totalSec)*100, 92);
+    elWakeFill.style.width = pct + '%';
+    var rem = Math.max(0, Math.round(totalSec - elapsed));
+    elWakeTxt.textContent = rem > 0
+      ? 'Server waking up \u2014 ~'+rem+'s remaining...'
+      : 'Almost ready...';
+    if(elapsed >= totalSec){ clearInterval(wakeTimer); wakeTimer=null; }
+  }, 500);
+}
+function stopWake(){
+  elWake.classList.remove('show');
+  elWakeFill.style.width = '0%';
+  if(wakeTimer){ clearInterval(wakeTimer); wakeTimer=null; }
+}
+
+/* ── DOWNLOAD FILE ───────────────────────────────────────────── */
+/* Uses /api/merge (server-side ffmpeg) for DASH streams.
+   Uses /api/stream (proxy) for all other media.                 */
 function dlFile(url, fname, audioUrl){
   if(!url) return;
   var dlUrl;
   if(audioUrl){
-    // DASH video - merge video+audio server-side via ffmpeg
-    dlUrl = API+'/api/merge?videoUrl='+encodeURIComponent(url)
+    dlUrl = API+'/api/merge'
+      +'?videoUrl='+encodeURIComponent(url)
       +'&audioUrl='+encodeURIComponent(audioUrl)
       +'&filename='+encodeURIComponent(fname||'video.mp4');
   } else {
-    // Muxed video (already has audio) or audio-only - direct stream
-    dlUrl = API+'/api/stream?url='+encodeURIComponent(url)
+    dlUrl = API+'/api/stream'
+      +'?url='+encodeURIComponent(url)
       +(fname?'&filename='+encodeURIComponent(fname):'');
   }
   var a = document.createElement('a');
-  a.href = dlUrl;
-  a.download = fname || 'download.mp4';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
+  a.href=dlUrl; a.download=fname||'download'; a.style.display='none';
+  document.body.appendChild(a); a.click();
   setTimeout(function(){ document.body.removeChild(a); }, 2000);
-  elPF.style.width = '100%';
-  elPT.textContent = audioUrl ? 'Merging video+audio, download starting...' : 'Download started!';
+
+  elPF.style.width='80%';
+  elPT.textContent = audioUrl ? 'Merging video+audio on server...' : 'Download started!';
   elProg.classList.add('show');
-  elDlTxt.textContent = 'Downloading...';
+  elDlTxt.textContent='Downloading\u2026';
   setSt('ok','Download started');
-  setTimeout(function(){ elProg.classList.remove('show'); elPF.style.width='0%'; elDlTxt.textContent='Download again'; elDlBtn.disabled=false; }, 5000);
+  setTimeout(function(){
+    elProg.classList.remove('show');
+    elPF.style.width='0%';
+    elDlTxt.textContent='Download again';
+    elDlBtn.disabled=false;
+  }, 6000);
 }
 
-window._dl = function(url, fname){ dlFile(url, fname); };
-window._dlAll = function(imgs){
-  imgs.forEach(function(img, i){
+/* Exposed for inline onclick in image grid */
+window.__zDl    = function(url,fname){ dlFile(url,fname,''); };
+window.__zDlAll = function(imgs){
+  imgs.forEach(function(img,i){
     setTimeout(function(){
-      var a = document.createElement('a');
-      a.href = px(img, 'image_'+(i+1)+'.jpg');
-      a.download = 'image_'+(i+1)+'.jpg';
-      a.style.display = 'none';
+      var a=document.createElement('a');
+      a.href=API+'/api/stream?url='+encodeURIComponent(img)+'&filename=image_'+(i+1)+'.jpg';
+      a.download='image_'+(i+1)+'.jpg'; a.style.display='none';
       document.body.appendChild(a); a.click();
-      setTimeout(function(){ document.body.removeChild(a); }, 1500);
+      setTimeout(function(){ document.body.removeChild(a); },1500);
     }, i*700);
   });
 };
 
-elDlBtn.onclick = function(){ if(S.curUrl) dlFile(S.curUrl, S.curFname, S.curAudioUrl); };
+/* ── DASH AUDIO SYNC ─────────────────────────────────────────── */
+/* YouTube 1080p+: video stream has no audio. Hidden <audio>
+   element is kept in perfect sync with the <video> element.     */
+function setupDashSync(){
+  var vid = document.getElementById('zPV');
+  var aud = document.getElementById('zPA');
+  if(!vid || !aud) return;
+  vid.onplay         = function(){ aud.currentTime=vid.currentTime; aud.play().catch(function(){}); };
+  vid.onpause        = function(){ aud.pause(); };
+  vid.onseeked       = function(){ aud.currentTime=vid.currentTime; };
+  vid.onended        = function(){ aud.pause(); };
+  vid.onvolumechange = function(){ aud.volume=vid.volume; aud.muted=vid.muted; };
+  aud.volume=1; aud.muted=false;
+}
 
-/* --- DASH AUDIO SYNC ----------------------------------------
-   YouTube 1080p+: video-only DASH stream has no audio.
-   Hidden <audio> element stays in sync with <video>.        */
-function setupDashSync(){ /* handled by /api/merge */ }
-
-/* Build video/audio player HTML */
+/* ── BUILD VIDEO PLAYER HTML ─────────────────────────────────── */
 function buildPlayer(vidUrl, audioUrl, autoplay){
-  var h = '<div class="mbox">';
+  var ap = autoplay ? ' autoplay' : '';
+  var pv = API+'/api/stream?url='+encodeURIComponent(vidUrl);
+  var h  = '<div class="z-mbox">';
   if(audioUrl){
-    // DASH: video has no audio - use /api/merge to combine on-the-fly
-    // For preview we use the merge endpoint with streaming output
-    var mergeUrl = API+'/api/merge?videoUrl='+encodeURIComponent(vidUrl)+'&audioUrl='+encodeURIComponent(audioUrl)+'&filename=preview.mp4';
-    h += '<video id="PV" controls preload="auto" '+(autoplay?'autoplay ':'')+' style="width:100%;max-height:320px;background:#000" src="'+esc(mergeUrl)+'"></video>';
-    h += '<div class="abadge">HD + Audio</div>';
+    var pa = API+'/api/stream?url='+encodeURIComponent(audioUrl);
+    h += '<video id="zPV" controls preload="auto"'+ap+' style="width:100%;max-height:320px;background:#000" src="'+esc(pv)+'"></video>';
+    h += '<audio id="zPA" preload="auto" style="display:none" src="'+esc(pa)+'"></audio>';
+    h += '<div class="z-abadge">HD+Audio</div>';
   } else {
-    var pv = API+'/api/stream?url='+encodeURIComponent(vidUrl);
-    h += '<video id="PV" controls preload="auto" '+(autoplay?'autoplay ':'')+' style="width:100%;max-height:320px;background:#000" src="'+esc(pv)+'"></video>';
+    h += '<video id="zPV" controls preload="auto"'+ap+' style="width:100%;max-height:320px;background:#000" src="'+esc(pv)+'"></video>';
   }
   h += '</div>';
   return h;
 }
 
-/* --- BUILD QUALITY LIST ----------------------------------- */
+/* ── BUILD QUALITY LIST ──────────────────────────────────────── */
 function buildQ(fmts){
-  var html = '';
-  fmts.forEach(function(f, i){
-    var isA = (f.type==='audio');
-    var ext = (f.ext||'mp4').toUpperCase();
+  var html='', firstDone=false;
+  fmts.forEach(function(f,i){
+    var isA   = (f.type==='audio');
+    var ext   = (f.ext||'mp4').toUpperCase();
     var fname = (f.quality||'download').replace(/\s+/g,'_').toLowerCase()+'.'+(f.ext||'mp4');
-    var aUrl = f.audioUrl||'';
-    if(i===0){
+    var aUrl  = f.audioUrl||'';
+    var sub   = esc(f.label||'') + (f.size?' &nbsp;'+sz(f.size):'') + (f.fps?' &nbsp;'+f.fps+'fps':'');
+
+    if(!firstDone){
       S.curUrl=f.url; S.curFname=fname; S.curAudioUrl=aUrl;
-      elDlBtn.disabled=false; elDlTxt.textContent='Download '+f.quality;
+      firstDone=true;
     }
-    html += '<div class="qi'+(i===0?' on':'')+'"'
+
+    html += '<div class="z-qi'+(i===0?' on':'')+'"'
       +' data-url="'+esc(f.url)+'"'
       +' data-fname="'+esc(fname)+'"'
       +' data-label="'+esc(f.quality||'')+'"'
       +' data-audio="'+esc(aUrl)+'">'
-      +'<div class="qi-l"><div class="qi-dot"></div><div>'
-      +'<div class="qi-name">'+esc(f.quality||'Download')+'</div>'
-      +'<div class="qi-sub">'+esc(f.label||'')+(f.size?' &nbsp;'+sz(f.size):'')+(f.fps?' &nbsp;'+f.fps+'fps':'')+'</div>'
+      +'<div class="z-qi-l"><div class="z-qi-dot"></div><div>'
+      +'<div class="z-qi-name">'+esc(f.quality||'Download')+'</div>'
+      +'<div class="z-qi-sub">'+sub+'</div>'
       +'</div></div>'
-      +'<span class="qi-fmt '+(isA?'fa':'fv')+'">'+esc(ext)+'</span>'
+      +'<span class="z-qi-fmt '+(isA?'z-fa':'z-fv')+'">'+esc(ext)+'</span>'
       +'</div>';
   });
   elQlist.innerHTML = html;
-  document.querySelectorAll('.qi').forEach(function(item){
+
+  // Set first item as selected
+  if(fmts.length){
+    var f0 = fmts[0];
+    elDlBtn.disabled=false;
+    elDlTxt.textContent='Download '+(f0.quality||'');
+    elDlBtn.onclick = function(){ dlFile(S.curUrl,S.curFname,S.curAudioUrl); };
+  }
+
+  // Click handlers on each row
+  elQlist.querySelectorAll('.z-qi').forEach(function(item){
     item.onclick = function(){
-      document.querySelectorAll('.qi').forEach(function(x){x.classList.remove('on');});
+      elQlist.querySelectorAll('.z-qi').forEach(function(x){ x.classList.remove('on'); });
       item.classList.add('on');
-      S.curUrl=item.dataset.url; S.curFname=item.dataset.fname; S.curAudioUrl=item.dataset.audio||'';
-      elDlBtn.disabled=false; elDlTxt.textContent='Download '+esc(item.dataset.label);
+      S.curUrl      = item.dataset.url;
+      S.curFname    = item.dataset.fname;
+      S.curAudioUrl = item.dataset.audio||'';
+      elDlBtn.disabled=false;
+      elDlTxt.textContent='Download '+esc(item.dataset.label);
+      elDlBtn.onclick = function(){ dlFile(S.curUrl,S.curFname,S.curAudioUrl); };
       elProg.classList.remove('show'); elPF.style.width='0%';
     };
   });
 }
 
-/* --- RENDER RESULT --------------------------------------- */
+/* ── RENDER RESULT ───────────────────────────────────────────── */
 function renderResult(data){
   setSt('ok','Ready');
-  var isImg = (data.images && data.images.length>0);
+  var isImg = (S.type==='image' && data.images && data.images.length>0);
 
-  /* Preview */
+  /* Media preview */
   if(!isImg && data.formats && data.formats.length){
-    var vidFmt = data.formats.find(function(f){return f.type==='video';});
-    var src = vidFmt ? vidFmt.url : '';
-    var audioSrc = (vidFmt && !vidFmt.hasMuxedAudio && vidFmt.audioUrl) ? vidFmt.audioUrl : '';
+    var vidFmt = data.formats.find(function(f){ return f.type==='video'; });
+    var src    = vidFmt ? vidFmt.url : '';
+    var audSrc = (vidFmt && !vidFmt.hasMuxedAudio && vidFmt.audioUrl) ? vidFmt.audioUrl : '';
 
     if(S.type==='audio'){
-      var audFmt = data.formats.find(function(f){return f.type==='audio';});
-      if(audFmt) elMediaBox.innerHTML = '<div class="mbox"><audio controls preload="metadata" src="'+esc(px(audFmt.url))+'"></audio></div>';
+      var audFmt = data.formats.find(function(f){ return f.type==='audio'; });
+      if(audFmt){
+        var pa = API+'/api/stream?url='+encodeURIComponent(audFmt.url);
+        elMBox.innerHTML='<div class="z-mbox"><audio controls preload="metadata" style="width:100%" src="'+esc(pa)+'"></audio></div>';
+      }
     } else if(src){
       if(data.thumbnail){
-        elMediaBox.innerHTML = '<div class="tbox" id="TP">'
+        elMBox.innerHTML='<div class="z-tbox" id="zTP">'
           +'<img src="'+esc(data.thumbnail)+'" onerror="this.style.visibility=\'hidden\'">'
-          +'<div class="pov"><div class="pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>'
+          +'<div class="z-pov"><div class="z-pbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>'
+          +(audSrc?'<div class="z-abadge">HD+Audio</div>':'')
           +'</div>';
-        (function(s,a){
-          var tp = G('TP');
-          if(tp) tp.onclick = function(){
-            elMediaBox.innerHTML = buildPlayer(s,a,true);
-            setTimeout(setupDashSync, 200);
-          };
-        })(src, audioSrc);
+        var tp = G('zTP');
+        if(tp){
+          (function(s,a){
+            tp.onclick = function(){
+              elMBox.innerHTML = buildPlayer(s,a,true);
+              setTimeout(setupDashSync,200);
+            };
+          })(src,audSrc);
+        }
       } else {
-        elMediaBox.innerHTML = buildPlayer(src, audioSrc, false);
-        setTimeout(setupDashSync, 200);
+        elMBox.innerHTML = buildPlayer(src,audSrc,false);
+        setTimeout(setupDashSync,200);
       }
     }
   }
 
   /* Image grid */
   if(isImg){
-    elMediaBox.innerHTML = '<div class="tbox"><img src="'+esc(data.images[0])+'" style="max-height:200px;object-fit:cover;width:100%;border-radius:14px" onerror="this.style.visibility=\'hidden\'"></div>';
-    var ig = '<div class="igrid">';
-    data.images.forEach(function(img, i){
-      ig += '<div class="igitem">'
-        +'<img src="'+esc(img)+'" loading="lazy" onerror="this.style.visibility=\'hidden\'">'
-        +'<div class="igov"><button onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">Save</button></div>'
-        +'</div>';
+    elMBox.innerHTML='<div class="z-tbox"><img src="'+esc(data.images[0])+'" style="max-height:200px;object-fit:cover;width:100%;border-radius:14px" onerror="this.style.visibility=\'hidden\'"></div>';
+    var ig='<div class="z-igrid">';
+    data.images.forEach(function(img,i){
+      ig+='<div class="z-igitem"><img src="'+esc(img)+'" loading="lazy" onerror="this.style.visibility=\'hidden\'">'
+        +'<div class="z-igov"><button onclick="window.__zDl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">Save</button></div></div>';
     });
-    ig += '</div>';
+    ig+='</div>';
     if(data.images.length>1){
-      ig += '<button class="dlbtn" style="margin-top:10px" onclick="window._dlAll('+JSON.stringify(data.images)+')">Download All '+data.images.length+' Images</button>';
+      ig+='<button class="z-dlbtn" style="margin-top:10px" onclick="window.__zDlAll('+JSON.stringify(data.images)+')">Download All '+data.images.length+' Images</button>';
     }
-    elImgrid.innerHTML = ig;
-    var extH = '';
-    data.images.forEach(function(img, i){
-      extH += '<button class="exbtn" onclick="window._dl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">'
+    elIgrid.innerHTML=ig;
+    var extH='';
+    data.images.forEach(function(img,i){
+      extH+='<button class="z-exbtn" onclick="window.__zDl(\''+esc(img)+'\',\'image_'+(i+1)+'.jpg\')">'
         +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
-        +'<span>Image '+(i+1)+'</span><span class="exbtn-q">JPG</span></button>';
+        +'<span>Image '+(i+1)+'</span><span class="z-exbtn-q">JPG</span></button>';
     });
-    elExtras.innerHTML = extH;
+    elExtras.innerHTML=extH;
   }
 
   /* Meta */
   elMeta.style.display='block';
-  elMTitle.textContent = (data.title||'Video').slice(0,80);
-  var mr = '';
-  if(data.author)   mr += '<div class="meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'+esc(data.author)+'</div>';
-  if(data.duration) mr += '<div class="meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'+Math.floor(data.duration/60)+'m '+(data.duration%60)+'s</div>';
-  if(data.views)    mr += '<div class="meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'+fN(data.views)+' views</div>';
-  if(data.likes)    mr += '<div class="meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'+fN(data.likes)+' likes</div>';
-  elMRows.innerHTML = mr;
-  elMTags.innerHTML = '<span class="tag tg">'+esc(data.platform||'video')+'</span>'
-    +'<span class="tag tb">yt-dlp</span>'
-    +(data.formats?'<span class="tag tp">'+data.formats.length+' formats</span>':'');
+  elMTitle.textContent=(data.title||'Video').slice(0,80);
+  var mr='';
+  if(data.author)   mr+='<div class="z-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'+esc(data.author)+'</div>';
+  if(data.duration) mr+='<div class="z-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'+Math.floor(data.duration/60)+'m '+(data.duration%60)+'s</div>';
+  if(data.views)    mr+='<div class="z-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'+fN(data.views)+' views</div>';
+  if(data.likes)    mr+='<div class="z-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'+fN(data.likes)+' likes</div>';
+  elMRows.innerHTML=mr;
+  elMTags.innerHTML='<span class="z-tag z-tg">'+esc(data.platform||'video')+'</span>'
+    +'<span class="z-tag z-tb">yt-dlp</span>'
+    +(data.formats?'<span class="z-tag z-tp">'+data.formats.length+' formats</span>':'');
 
-  if(data.formats && data.formats.length) buildQ(data.formats);
+  if(data.formats&&data.formats.length) buildQ(data.formats);
   elResult.classList.add('show');
-  setTimeout(function(){ elResult.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 200);
+  setTimeout(function(){ elResult.scrollIntoView({behavior:'smooth',block:'nearest'}); },200);
 }
 
-/* --- SERVER HEALTH CHECK on load -------------------------- */
+/* ── SERVER HEALTH CHECK ─────────────────────────────────────── */
+/* Note: worker always returns 200 now even when Render sleeps.
+   This prevents the "Server offline" red dot on page load.      */
 function checkServer(){
-  fetch(API+'/health',{method:'GET',signal:AbortSignal.timeout(8000)})
-  .then(function(r){return r.json();})
+  fetch(API+'/health',{method:'GET',signal:AbortSignal.timeout(12000)})
+  .then(function(r){ return r.json(); })
   .then(function(d){
-    if(d.ok){ setSt('ok','Server ready - paste any link above'); }
-    else { setSt('err','Server issue - yt-dlp not found on server'); }
+    if(d.worker==='ok'){
+      if(d.backend && d.backend.ok){
+        setSt('ok','Server ready \u2014 paste any link above');
+      } else {
+        // Backend sleeping — show neutral status, not error
+        setSt('ok','Ready \u2014 first request wakes server (~30s)');
+      }
+    } else {
+      setSt('err','Server issue');
+    }
   })
   .catch(function(){
-    setSt('err','Server offline - visit railway.app to check your deployment');
-    elStxt.title = API+'/health';
+    setSt('err','Could not reach server \u2014 retrying...');
+    setTimeout(checkServer,10000);
   });
 }
 checkServer();
 
-/* --- MAIN FETCH ------------------------------------------- */
-function doFetch(url, retryCount){
-  retryCount = retryCount||0;
+/* ── MAIN FETCH — with smart cold-start retry ────────────────── */
+/*
+  Render free tier can take 30-80s to wake up.
+  Strategy: start wake progress bar immediately, retry up to 5x
+  with 6s gaps. Total wait budget: ~50s = plenty for cold start.
+*/
+function doFetch(url, attempt){
+  attempt = attempt||1;
+
+  if(attempt===1){
+    elLdrTxt.textContent='Fetching download links...';
+    startWake(55);
+  } else {
+    elLdrTxt.textContent='Server still waking up\u2026 attempt '+attempt+'/5';
+  }
+
   fetch(API+'/api/download', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({url:url, type:S.type}),
-    signal:AbortSignal.timeout(60000)
+    method:  'POST',
+    headers: {'Content-Type':'application/json'},
+    body:    JSON.stringify({url:url, type:S.type}),
+    signal:  AbortSignal.timeout(90000), // 90s timeout per attempt
   })
-  .then(function(r){ if(!r.ok) throw new Error('Server error '+r.status); return r.json(); })
-  .then(function(data){
-    elGo.disabled = false;
+  .then(function(r){
+    // Always read the body — even 4xx/5xx have JSON error details
+    return r.json().then(function(d){ return {status:r.status, data:d}; });
+  })
+  .then(function(resp){
+    elGo.disabled=false;
     elLdr.classList.remove('show');
-    if(!data.success){ showErr('Download Failed', data.error||'Could not fetch this URL', data.detail||data.fix||''); return; }
+    stopWake();
+
+    var data = resp.data;
+    if(!data || !data.success){
+      var errTitle  = 'Download Failed';
+      var errMsg    = (data && data.error)  || 'Could not process this URL.';
+      var errDetail = (data && (data.detail||data.fix)) || '';
+      // Special messaging for 400 (bad URL)
+      if(resp.status===400) errTitle='Invalid URL';
+      if(resp.status===429) errTitle='Too Many Requests';
+      showErr(errTitle, errMsg, errDetail);
+      setSt('err','Failed');
+      return;
+    }
+
+    setSt('ok','Done \u2014 '+(data.formats?data.formats.length:0)+' formats found');
     renderResult(data);
   })
   .catch(function(e){
-    /* Auto-retry once after 3 seconds if it was a network error */
-    if(retryCount < 1 && (e.name==='TypeError'||e.name==='AbortError')){
-      elPT.textContent='Retrying...';
-      elProg.classList.add('show');
-      setTimeout(function(){ doFetch(url,1); }, 3000);
+    var isNet = (e.name==='TypeError'||e.name==='AbortError'||e.name==='TimeoutError');
+
+    // Auto-retry on network/timeout errors — server likely waking up
+    if(isNet && attempt<5){
+      setTimeout(function(){ doFetch(url,attempt+1); }, 6000);
       return;
     }
-    elGo.disabled = false;
+
+    elGo.disabled=false;
     elLdr.classList.remove('show');
-    elProg.classList.remove('show');
-    var isNetErr = (e.name==='TypeError'||e.name==='AbortError');
-    if(isNetErr){
+    stopWake();
+
+    if(isNet){
       showErr(
-        'Server Offline',
-        'Your Railway server is not responding. Steps to fix:  1) Go to railway.app  2) Open your project  3) Click Redeploy',
-        API+'/health  (open this in a new tab to test)'
+        'Server Timeout',
+        'The server took too long to wake up. Click Download again \u2014 it will be instant now.',
+        API+'/health'
       );
     } else {
-      showErr('Error', e.message||'Something went wrong', '');
+      showErr('Error', e.message||'Something went wrong.', '');
     }
-    setSt('err','Server offline');
+    setSt('err','Timeout');
   });
 }
 
+/* ── URL LIVE DETECT ─────────────────────────────────────────── */
+elUrl.addEventListener('input', function(){
+  var pp = findPlat(elUrl.value.trim());
+  if(pp){ elDetTxt.textContent=pp.n+' link detected'; elDet.classList.add('show'); }
+  else { elDet.classList.remove('show'); }
+});
+elUrl.addEventListener('keydown', function(e){ if(e.key==='Enter') elGo.click(); });
+
+/* ── GO BUTTON ───────────────────────────────────────────────── */
 elGo.addEventListener('click', function(){
   var url = elUrl.value.trim();
   if(!url){ elUrl.focus(); return; }
-  if(!/^https?:\/\//i.test(url)){ showErr('Invalid URL','Please paste a full link starting with https://'); return; }
+  if(!/^https?:\/\//i.test(url)){
+    showErr('Invalid URL','Please paste a full link starting with https://','');
+    return;
+  }
   resetUI();
-  elGo.disabled = true;
+  elGo.disabled=true;
   elLdr.classList.add('show');
   elErr.classList.remove('show');
   var plat = findPlat(url);
-  setSt('busy', (plat?'Loading '+plat.n:'Fetching')+'...');
-  doFetch(url,0);
+  setSt('busy',(plat?'Loading '+plat.n:'Fetching')+'...');
+  doFetch(url,1);
 });
+
+/* ── FAQ ACCORDION ───────────────────────────────────────────── */
+wrap.querySelectorAll('.z-faqq').forEach(function(q){
+  q.onclick = function(){
+    var item = q.parentNode;
+    var was  = item.classList.contains('open');
+    wrap.querySelectorAll('.z-faqitem').forEach(function(i){ i.classList.remove('open'); });
+    if(!was) item.classList.add('open');
+  };
+});
+
+})(); // end IIFE
 </script>
 </body>
 </html>
