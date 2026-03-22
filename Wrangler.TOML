@@ -1,1 +1,26 @@
+# ═══════════════════════════════════════════════════════════
+#  wrangler.toml — Cloudflare Worker Config
+#  Deploy: npx wrangler deploy
+# ═══════════════════════════════════════════════════════════
 
+name = "media-downloader"
+main = "workers.js"
+compatibility_date = "2024-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── KV Namespace (cache) ──────────────────────────────────
+# Create with: npx wrangler kv:namespace create CACHE
+# Then replace the id below with the real one
+[[kv_namespaces]]
+binding = "CACHE"
+id      = "YOUR_KV_NAMESPACE_ID_HERE"
+
+# ── Environment Variables ─────────────────────────────────
+[vars]
+BACKEND_URL = "https://media-downloader-mnfd.onrender.com"
+
+# ── Routes ────────────────────────────────────────────────
+# Uncomment and set your domain if needed:
+# [[routes]]
+# pattern = "yoursite.com/api/*"
+# zone_name = "yoursite.com"
