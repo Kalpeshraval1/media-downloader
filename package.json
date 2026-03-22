@@ -1,17 +1,23 @@
 {
   "name": "media-downloader",
-  "version": "2.0.0",
-  "description": "All-in-One Media Downloader - Node.js + yt-dlp",
+  "version": "3.0.0",
+  "description": "All-in-One Media Downloader API — 90M+ daily traffic ready",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "install-ytdlp": "pip3 install -U yt-dlp || pip install -U yt-dlp"
+    "start":           "node server.js",
+    "start:cluster":   "node cluster.js",
+    "dev":             "node server.js",
+    "install-ytdlp":   "pip3 install -U yt-dlp --break-system-packages || pip install -U yt-dlp",
+    "update-ytdlp":    "pip3 install -U yt-dlp --break-system-packages",
+    "health":          "curl -s http://localhost:3000/health | node -e \"process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d)))\""
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "cors":    "^2.8.5",
+    "express": "^4.19.2"
   },
   "engines": {
-    "node": ">=16.0.0"
-  }
+    "node": ">=18.0.0"
+  },
+  "keywords": ["media", "downloader", "yt-dlp", "youtube", "tiktok"],
+  "license": "MIT"
 }
